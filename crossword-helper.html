@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Crossword Helper by Stillwater</title>
+  <meta name="description" content="Free crossword puzzle helper. Enter your known letters and find matching words instantly. No wifi required — just your brain and a little help." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Serif+4:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --navy:      #1b2a3f;
+      --navy-mid:  #243447;
+      --navy-lite: #2e4260;
+      --slate:     #4a6580;
+      --slate-lite:#6b8faa;
+      --warm:      #c9a96e;
+      --warm-lite: #e2c99a;
+      --cream:     #f5f0e8;
+      --cream-mid: #ede6d6;
+      --text-main: #1b2a3f;
+      --text-mute: #6b7f8f;
+      --white:     #ffffff;
+      --radius:    6px;
+      --shadow:    0 2px 16px rgba(27,42,63,0.10);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Source Serif 4', Georgia, serif;
+      background: var(--cream);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: var(--navy);
+      padding: 0 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
+    }
+
+    .logo-main {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--warm-lite);
+      letter-spacing: 0.01em;
+    }
+
+    .logo-sub {
+      font-family: 'Source Serif 4', serif;
+      font-size: 0.75rem;
+      font-weight: 300;
+      font-style: italic;
+      color: var(--slate-lite);
+      letter-spacing: 0.06em;
+    }
+
+    .tagline-pill {
+      font-size: 0.7rem;
+      font-family: 'Source Serif 4', serif;
+      font-style: italic;
+      color: var(--slate-lite);
+      background: var(--navy-lite);
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+
+    /* ── HERO BAND ── */
+    .hero {
+      background: linear-gradient(135deg, var(--navy-mid) 0%, var(--navy-lite) 100%);
+      padding: 2.5rem 1.5rem 2rem;
+      text-align: center;
+      border-bottom: 3px solid var(--warm);
+    }
+
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      font-weight: 600;
+      color: var(--cream);
+      line-height: 1.2;
+      margin-bottom: 0.5rem;
+    }
+
+    .hero h1 span { color: var(--warm); }
+
+    .hero p {
+      font-size: 0.95rem;
+      font-weight: 300;
+      font-style: italic;
+      color: var(--slate-lite);
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    /* ── MAIN LAYOUT ── */
+    .page {
+      display: grid;
+      grid-template-columns: 1fr 260px;
+      gap: 1.5rem;
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+      flex: 1;
+    }
+
+    @media (max-width: 680px) {
+      .page { grid-template-columns: 1fr; }
+      .sidebar { order: 2; }
+    }
+
+    /* ── TOOL CARD ── */
+    .tool-card {
+      background: var(--white);
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .tool-card-header {
+      background: var(--navy);
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .tool-card-header .icon {
+      font-size: 1.2rem;
+    }
+
+    .tool-card-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--cream);
+    }
+
+    .tool-body { padding: 1.5rem; }
+
+    /* ── INSTRUCTIONS ── */
+    .instructions {
+      background: var(--cream-mid);
+      border-left: 3px solid var(--warm);
+      border-radius: 0 var(--radius) var(--radius) 0;
+      padding: 0.75rem 1rem;
+      margin-bottom: 1.25rem;
+      font-size: 0.85rem;
+      color: var(--text-mute);
+      line-height: 1.6;
+    }
+
+    .instructions strong { color: var(--navy); }
+
+    /* ── PATTERN INPUT ── */
+    .input-label {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--navy);
+      display: block;
+      margin-bottom: 0.4rem;
+    }
+
+    .pattern-wrap {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .pattern-input {
+      flex: 1;
+      font-family: 'Source Serif 4', serif;
+      font-size: 1.2rem;
+      letter-spacing: 0.15em;
+      padding: 0.65rem 1rem;
+      border: 2px solid var(--cream-mid);
+      border-radius: var(--radius);
+      background: var(--cream);
+      color: var(--navy);
+      text-transform: uppercase;
+      transition: border-color 0.2s;
+      outline: none;
+    }
+
+    .pattern-input:focus {
+      border-color: var(--warm);
+      background: var(--white);
+    }
+
+    .pattern-input::placeholder {
+      text-transform: none;
+      letter-spacing: 0;
+      font-style: italic;
+      color: #aab;
+      font-size: 0.95rem;
+    }
+
+    .btn-search {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      background: var(--navy);
+      color: var(--warm-lite);
+      border: none;
+      border-radius: var(--radius);
+      padding: 0 1.25rem;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.18s, transform 0.12s;
+    }
+
+    .btn-search:hover { background: var(--navy-lite); transform: translateY(-1px); }
+    .btn-search:active { transform: translateY(0); }
+
+    /* ── FILTERS ROW ── */
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+      align-items: flex-end;
+    }
+
+    .filter-group { display: flex; flex-direction: column; gap: 0.3rem; }
+
+    .filter-label {
+      font-size: 0.72rem;
+      font-weight: 400;
+      font-style: italic;
+      color: var(--text-mute);
+      letter-spacing: 0.04em;
+    }
+
+    .filter-select, .filter-input {
+      font-family: 'Source Serif 4', serif;
+      font-size: 0.85rem;
+      padding: 0.4rem 0.65rem;
+      border: 1.5px solid var(--cream-mid);
+      border-radius: var(--radius);
+      background: var(--cream);
+      color: var(--navy);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .filter-select:focus, .filter-input:focus { border-color: var(--slate-lite); }
+
+    .btn-clear {
+      font-family: 'Source Serif 4', serif;
+      font-size: 0.8rem;
+      font-style: italic;
+      color: var(--slate);
+      background: none;
+      border: 1.5px solid var(--cream-mid);
+      border-radius: var(--radius);
+      padding: 0.4rem 0.75rem;
+      cursor: pointer;
+      transition: color 0.18s, border-color 0.18s;
+      align-self: flex-end;
+    }
+
+    .btn-clear:hover { color: var(--navy); border-color: var(--slate-lite); }
+
+    /* ── DIVIDER ── */
+    .divider {
+      height: 1px;
+      background: var(--cream-mid);
+      margin: 0.5rem 0 1.25rem;
+    }
+
+    /* ── RESULTS ── */
+    #results-area { min-height: 80px; }
+
+    .results-meta {
+      font-size: 0.8rem;
+      font-style: italic;
+      color: var(--text-mute);
+      margin-bottom: 0.75rem;
+    }
+
+    .results-meta strong { color: var(--navy); font-style: normal; }
+
+    .word-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .word-chip {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.9rem;
+      background: var(--cream);
+      border: 1.5px solid var(--cream-mid);
+      border-radius: 4px;
+      padding: 0.3rem 0.65rem;
+      color: var(--navy);
+      cursor: default;
+      transition: background 0.15s, border-color 0.15s, transform 0.1s;
+      animation: chipIn 0.2s ease both;
+    }
+
+    .word-chip:hover {
+      background: var(--navy);
+      color: var(--warm-lite);
+      border-color: var(--navy);
+      transform: translateY(-1px);
+    }
+
+    @keyframes chipIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .no-results {
+      font-style: italic;
+      color: var(--text-mute);
+      font-size: 0.9rem;
+      padding: 1rem 0;
+    }
+
+    .hint-text {
+      font-style: italic;
+      color: var(--text-mute);
+      font-size: 0.88rem;
+      padding: 0.75rem 0;
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar { display: flex; flex-direction: column; gap: 1.25rem; }
+
+    .side-card {
+      background: var(--white);
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .side-card-header {
+      background: var(--navy);
+      padding: 0.65rem 1rem;
+    }
+
+    .side-card-header h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--warm-lite);
+      letter-spacing: 0.03em;
+    }
+
+    .side-card-body { padding: 1rem; }
+
+    /* Promo card */
+    .promo-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+      padding: 0.65rem 0;
+      border-bottom: 1px solid var(--cream-mid);
+    }
+
+    .promo-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .promo-item:first-child { padding-top: 0; }
+
+    .promo-item a {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--navy);
+      text-decoration: none;
+      line-height: 1.3;
+      transition: color 0.15s;
+    }
+
+    .promo-item a:hover { color: var(--slate); }
+
+    .promo-item .promo-desc {
+      font-size: 0.75rem;
+      font-style: italic;
+      color: var(--text-mute);
+      line-height: 1.4;
+    }
+
+    .promo-item .promo-tag {
+      display: inline-block;
+      font-size: 0.65rem;
+      font-family: 'Source Serif 4', serif;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      background: var(--cream-mid);
+      color: var(--slate);
+      border-radius: 3px;
+      padding: 0.15rem 0.4rem;
+      width: fit-content;
+    }
+
+    .promo-tag.free { background: #e8f4ec; color: #3a7a50; }
+    .promo-tag.book { background: #e8eef4; color: #2e5080; }
+
+    /* How-to card */
+    .how-list {
+      list-style: none;
+      counter-reset: steps;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .how-list li {
+      counter-increment: steps;
+      display: flex;
+      gap: 0.6rem;
+      font-size: 0.8rem;
+      color: var(--text-mute);
+      line-height: 1.5;
+      align-items: flex-start;
+    }
+
+    .how-list li::before {
+      content: counter(steps);
+      font-family: 'Playfair Display', serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--white);
+      background: var(--warm);
+      min-width: 1.25rem;
+      height: 1.25rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 0.1rem;
+    }
+
+    /* Ad placeholder */
+    .ad-placeholder {
+      background: var(--cream-mid);
+      border: 1.5px dashed #c5baa8;
+      border-radius: var(--radius);
+      height: 130px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.3rem;
+    }
+
+    .ad-placeholder span {
+      font-size: 0.7rem;
+      font-style: italic;
+      color: #aaa;
+      letter-spacing: 0.04em;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--navy);
+      color: var(--slate-lite);
+      text-align: center;
+      padding: 1.25rem 1.5rem;
+      font-size: 0.75rem;
+      font-style: italic;
+      margin-top: auto;
+      line-height: 1.8;
+    }
+
+    footer a {
+      color: var(--warm-lite);
+      text-decoration: none;
+    }
+
+    footer a:hover { text-decoration: underline; }
+
+    footer .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-top: 0.4rem;
+      flex-wrap: wrap;
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">
+    <span class="logo-main">Stillwater</span>
+    <span class="logo-sub">puzzle tools</span>
+  </div>
+  <a class="nav-back" href="index.html" style="font-size:0.78rem;font-style:italic;color:#6b8faa;text-decoration:none;">← All Tools</a>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>Crossword <span>Helper</span></h1>
+  <p>Enter your known letters. Use dots for blanks. Find your word in seconds.</p>
+</div>
+
+<!-- PAGE BODY -->
+<div class="page">
+
+  <!-- TOOL COLUMN -->
+  <main>
+    <div class="tool-card">
+      <div class="tool-card-header">
+        <span class="icon">✦</span>
+        <h2>Fill in the Blanks</h2>
+      </div>
+      <div class="tool-body">
+
+        <div class="instructions">
+          Type your pattern using <strong>letters you know</strong> and <strong>dots ( . ) for unknowns</strong>.<br>
+          Example: <strong>C.O.S.W.R.D</strong> matches <em>CROSSWORD</em> &nbsp;·&nbsp; <strong>P..ZLE</strong> matches <em>PUZZLE</em>
+        </div>
+
+        <label class="input-label" for="patternInput">Your Pattern</label>
+        <div class="pattern-wrap">
+          <input
+            id="patternInput"
+            class="pattern-input"
+            type="text"
+            placeholder="e.g.  P..ZLE  or  .ROSS.ORD"
+            maxlength="30"
+            autocomplete="off"
+            autocorrect="off"
+            spellcheck="false"
+          />
+          <button class="btn-search" id="searchBtn">Find Words</button>
+        </div>
+
+        <div class="filters">
+          <div class="filter-group">
+            <span class="filter-label">Must contain letter</span>
+            <input class="filter-input" id="mustContain" type="text" maxlength="1" placeholder="e.g. R" style="width:70px;text-align:center;text-transform:uppercase;" />
+          </div>
+          <div class="filter-group">
+            <span class="filter-label">Must start with</span>
+            <input class="filter-input" id="mustStart" type="text" maxlength="1" placeholder="e.g. C" style="width:70px;text-align:center;text-transform:uppercase;" />
+          </div>
+          <div class="filter-group">
+            <span class="filter-label">Must end with</span>
+            <input class="filter-input" id="mustEnd" type="text" maxlength="1" placeholder="e.g. D" style="width:70px;text-align:center;text-transform:uppercase;" />
+          </div>
+          <button class="btn-clear" id="clearBtn">Clear all</button>
+        </div>
+
+        <div class="divider"></div>
+
+        <div id="results-area">
+          <p class="hint-text">Enter a pattern above and press <em>Find Words</em> to begin.</p>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+
+    <!-- HOW TO USE -->
+    <div class="side-card">
+      <div class="side-card-header"><h3>How to use</h3></div>
+      <div class="side-card-body">
+        <ol class="how-list">
+          <li>Count the letters in your crossword answer space</li>
+          <li>Type the letters you know; use a dot for each unknown</li>
+          <li>Add optional filters to narrow results further</li>
+          <li>Click <em>Find Words</em> — matches appear instantly</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- STILLWATER PROMO -->
+    <div class="side-card">
+      <div class="side-card-header"><h3>More from Stillwater</h3></div>
+      <div class="side-card-body">
+
+        <div class="promo-item">
+          <span class="promo-tag free">Free</span>
+          <a href="https://gum.new/gum/cmnfp6o5h000b04juex0j1ux3" target="_blank" rel="noopener">
+            Free 10-Page Puzzle Pack
+          </a>
+          <span class="promo-desc">Printable puzzles — no screen needed</span>
+        </div>
+
+        <div class="promo-item">
+          <span class="promo-tag book">Puzzle Books</span>
+          <a href="https://www.amazon.com/stores/author/B0FFSMGDFL/allbooks" target="_blank" rel="noopener">
+            Stillwater Puzzle Press on Amazon
+          </a>
+          <span class="promo-desc">78+ paperback puzzle books for adults</span>
+        </div>
+
+        <div class="promo-item">
+          <span class="promo-tag free">Free</span>
+          <a href="https://gum.new/gum/cmn9nk0wh000204kz2mp29d3u" target="_blank" rel="noopener">
+            Put the Phone Down
+          </a>
+          <span class="promo-desc">A free guide to reclaiming your focus</span>
+        </div>
+
+        <div class="promo-item">
+          <span class="promo-tag">Wellness</span>
+          <a href="https://stillwaterfocustools.gumroad.com/l/Digital_Detox_Kit" target="_blank" rel="noopener">
+            Digital Detox Starter Kit
+          </a>
+          <span class="promo-desc">Printable tools for a screen-free reset — $9.99</span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- AD SLOT -->
+    <div class="side-card">
+      <div class="side-card-header"><h3>Advertisement</h3></div>
+      <div class="side-card-body">
+        <div class="ad-placeholder">
+          <!-- Replace this div with your Google AdSense code -->
+          <span>Ad space</span>
+          <span>Google AdSense</span>
+        </div>
+      </div>
+    </div>
+
+  </aside>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div>Crossword Helper by Stillwater &nbsp;·&nbsp; Free puzzle tools for offline living</div>
+  <div class="footer-links">
+    <a href="https://stillwaterfocustools.gumroad.com" target="_blank" rel="noopener">Gumroad Shop</a>
+    <a href="https://www.amazon.com/stores/author/B0FFSMGDFL/allbooks" target="_blank" rel="noopener">Amazon Books</a>
+    <a href="mailto:hello@stillwaterco.com">Contact</a>
+    <a href="#privacy">Privacy</a>
+  </div>
+  <div style="margin-top:0.5rem; color: #4a6580;">© 2026 Stillwater Publishing. No wifi required.</div>
+</footer>
+
+<script>
+// ── WORD LIST ──────────────────────────────────────────────────────────────
+// A curated, royalty-free common-word list (2,000+ words).
+// For production, replace with a full dictionary JSON fetch.
+const WORDS = ("a ab ado ads age ago aid aim air ale all alm aloe also alto alum amid amp amu and ane ant any ape apt arc are ark arm art ash ask asp ass ate atop aunt aura auto awn awl axe aye azure back bade bail bait bake bald bale ball balm band bane bang bank bare bard bare bark barn bash bask bass bath bawl bead beam bean bear beat been beer beet bell bend best bias bile bill bind bird bite blow blue blur boat body bold bolt bomb bond bone book bore born bowl bray bred brew brow bull bump burn bush busy buzz cafe cage cake calm came cane cape card care cart case cash cast cave cent chap chat chip clan clap clay clew clip clod clop clot club clue coal coat coil cola cold colt comb come cone cord core cork corn cost coup cove cozy crab crew crop crow cube curb cure curl curt cute cyan dace dale damp dare dark dart dash daze deal dear debt deck deem deer deft deli dell dent desk dew dial dice dill dime dine dip dire dirk disc dish disk dock dome done dote dove down drab drag dram drip drop drum dual dude duke dull dune dusk dust dyer each earl ease east easy edge else emit envy epic even ever evil exam each face fact fade fail fair fake fall fame fare farm fast fate fawn faze fear feat feed feel feet fell felt fend fern fest feud file fill film find fine fire firm fish fist five flag flam flan flap flat flea fled flew flip flow foal foam fold fond font ford fore fork form fort foul fowl fray free frog from fuel full fume fund fuse fuzz gale gall game gape garb garb gate gave gaze gear geld gels gent germ gibe gill girl gist glad glee glob glum glut gnat gnaw gold golf gone gout grab grad gram gray grew grid grim grin gripe groan grub gulf gull gust guts gyms hack hail hale half hall halt hand hang hank hard hare hark harm harp hash hasp hast hate haul haze haze head heal heap hear heat heel held helm help hemp herb herd hero hewn hide high hike hill hint hive hoax hock hole holm home hone hood hook horn hose hour hove hull hump hung hunt hurl hymn icon idle inch into iris iron isle itch jade jail jake jamb jape jars jest jibe jibs jilt joust joust judo jump junk keen kegs kelp kept kern kid kind king kite knap knew knit knob knot lace lack lads laid lame lamp lane lard lark lash laud lave lawn lazy lead leaf leak lean leap lend lens lest levy lilt lime limp line lion list live load loam lobe lock loft lone loon lord lore lorn lose loss loft loud lout lure lurk lust mace made mail main male mall malt mane mark mare mast mate maze mead meal mean meat meld melt memo mend mere mesh mild mill milt mime mint mire mist moat mole molt moon moot mope more moss most moth move much mule murk musk mutt myth nave near neat nest next node none noon norm nose note null oboe ogre once open oval oven owed pace pack pact paid pall palm pant papa pare park part past pave peak peal peat peel peer pelf pelt peon pest phon pick pier pile pill pine pink pint pipe plod plop plot plow ploy plug plum plus poem pole poll pond pore port pose post pour prey prig prod prop prox puck puff pump pyre quad quay quit race rack raft rage raid rail rain rake ramp rang rank rant rare rash rate rave raze read real ream reap reel rely rent rest rice rich rick ride rift ring rink riot ripe rise risk rite road roam roar robe robs rock rode role roll romp roof room rope rose rout rove rude ruff rune rung runt ruse rush rust safe sage said sail same sand sane sang sank sash save seal seam sear sect seed seep self sell send sent serf sewn shed shin ship shod shoe shog shop show shun silk sill sing sink sire size skid ski skip slam slap slat slew slim slip slop slur snag snap snog snub soak soar sock soil sole some soot sort soul sour span spar sped spin spit spry spur stab star stay stem step stew stir stop stow stun sub such suit sulk surf swan swap swat swig swim swum tack tale talk tall tamp tang tank tape tare tarn tarp task taut teem tell tend tent term test text than that them then they thin tide tilt time tire toil told toll tomb tome tong took toot torn tote tour town toil trap trek trim trip trod troth true tuck tuft tug tump tund turf twin tyke type ugly ulna unit until upon urge used utter vale vast vein vest vice view vile vine vise void volt vote wade waft wail wait wake wand wane warp wart wary wasp wave weal wean weft weld well wend wept were west whet whim whip whit wide wile will wilt wind wine wink wire wise wish wisp with woke wold wolf womb wont wood wool work worm wove wrap wren writ yell yelp yoke yore your zeal zest zone zoom abuse abide abbot abbey abhor aback abash abase abate abduct abound abrupt absurd adage adapt added adept adorn adult after again aghast agile aglow agony agape agree aisle alder alert aloft alone along aloof aloud altar amend amiss ample amuse angel angry anime ankle annex annoy apish apple apply arena argot argue arise armor aroma arose array arrow ashen aside askew asset atlas atone attic avail avert avoid award awash awoke azure badly baker banjo belle below bench bight birth blame bland blank blast blaze bleat bleed blend bless blight blind blink bliss block bloke bland blood bloom bloop blossom blunt board bogus bonus bound boxer brace braid brain brake brand brave brawn brawl break breed breve brick bride brief brine brink brisk broth brine broom brood brows broke brook brown brush built bulge bunch buxom cabin canny camel candy caste catch cause cedar chalk champ chant chaos chart chase cheap cheer chess chest chide chief chime chose chuck churn civic civil clamb clamp clamor clang clash clasp clean clear cleat cleft clerk climb cling clink cloak clock clone close cloth cloud clout comet coral count court cover covet crack craft cramp crane crank crash creak cream creep crest crimp croak cross crowd crown crude cruel crush crust crypt curly cycle daily daisy dance dandy dealt death debut decay decry defer deign delay delta dense depot depth devil dirty disco dizzy dodge dowdy dowel draft drain drape drawl dread dread dream dress drift drink drive drove drown drowsy droll drool droop drove drove dusky dwarf dwell dying early earth eight elder elect email ember emote empty endow enact enjoy ennui epoch equip erupt essay evade evoke exact exert exile extra fable faint fairy fancy fatal feast fetch fever fiber fiend fight finch first fixed fjord flail flair flame flank flare flash flask fleck fleet flesh fling flint flirt flock flood floor floss flour flout flown flunk flute flyer foamy focal folly force forge forgo forte found foxen frame frank freak freed fresh friar frisk fritz frond frost froze frugal fumed gaily gamut gauze gavel gaudy gawky giddy girth given gland glare glass glaze gleam glean glide glint gloss glove gnarl gnome godly golly gorge gourd grace grade grail grain grand grasp grate gravel great greed greet grief grill grind gripe groan groin grove growl gruff guile guise gulch gusto gypsy hasty haven hedge heist hence herbs herby heron hoist homer honey honor hovel human humid humph hyena ideal image imply inane incur indie inert inert inner inter intro inure irate ivory jaunt jazzy jewel joust jumpy kayak keeps knack knave kneel kneel knife knight knoll known kudos lance large laser latch later laugh layer leapt least leave ledge leech legal lemon level lever light lithe liver llama lodge lofty loose lowly lucid lumpy lunar lusty lyric magic maize major manor maple marsh martyr match matte mauve maxim mayor mealy medal media messy might mimic mince minor mirth moist moldy money monks month moody moose moral morph mossy motif mourn muddy mulch musty nasal nasty naval needy nerve newly nicer nifty night noble noisy north notch novel nudge numby nurse nymph obese occur ocean offer often ombre onset optic orbit order organ other outer ounce outdo ovoid oxide ozone paddy pansy panther paper party pasta pasty patch patchy pause paved paycheck peach pearl peril perky petty phase phony picnic pilot pinch piney place plaid plain plait plane plank plant plash plate plaza plead pleat plied plunk poach point polka poppy pound pouch pouty power prank press prime print prior prize probe prone prong prose proud prove prowl prude prune psalm pubic pudgy pulse plush pussy quail qualm queer query queue quiet quill quilt quirk quota quote rabbi rabbi radar rainy rally ramen rancid range rapid ravel raspy raven rawer reach realm reedy reek refer reign relax relay relax remix remit rerun reuse revel rhyme rider ridge ripen risen risky ritzy rival riven rocky roomy roomy rough round route rowdy royal ruddy ruddy rugby ruler rupee rusty sadly saint salad sandy sanity sassy sauna savvy scale scalp scamp scamp scant scare scarf scary scene scent scoff scold scope score scorn scout scowl scram scrap scrub scrub seedy seize serve seven sever shard share sharp shawl sheen sheep sheer shelf shelf shell shift shirk shock shoot shore short shout shred shrew shrug shuck shunt siege sieve sigma silly since sinew skiff skim skimp skull slain slant slash slave sleek sleek sleep sleet slept slick slide slime slimy slink slosh slump slunk smack small smash smear smell smelt smirk smile smite smoke smoky smolt snare sneak sneer sniff snore snort snout snowy snuck solve sorry south sower space spade spank spare spark spawn speck speed spend spice spiky spill spine spire spite splat spoke spook spoon sport spout spray spree sprig spunk squat squib stage staid stain stair stale stalk stamp stand stare stark start stash state stave steal steam steel steep steer stern stiff still stomp stone stony stood stool store storm story stout stove straw stray strut stuck study stump stung stunk stunt style suave sugar suite sulky sunny super surge swamp sward swear sweat sweep sweet swept swift swill swoop sword syrup tabby table talon taunt tawny teach tense tepid terse testy thick thief thigh thing think thorn those three threw throe thumb thump tidal tiger tight timid tipsy tipsy title toast today token tonal topaz torch total totem tough toxic trace track trail train trait tramp trance trawl tread treat trend trial trick tried tripe trite troll trout trove truce truly trump trunk truss trust truth tulle tummy tuner tunic turbo twist tying umbra undue unify union unite unity unlit until unwed unzip upped usher utter uvula vague valor value valve vapid vault vaunt venal verse vicar vigil vigor viral virid visor vivid vocal vogue voice voila vouch vroom vouch wacky waltz warty waste watch water weary weave weedy weigh weird wench whelp where while whiff whirl whisk white whole widen widow wield wight windy witty woozy world wormy worse worst worth would would wound wrath wring wrist wrong wrote yacht yearn yield young yours yummy zappy zebra zingy zippy"].split(" ").map(w => w.toLowerCase()).filter(w => w.length > 1);
+
+// dedupe
+const DICT = [...new Set(WORDS)];
+
+// ── SEARCH LOGIC ──────────────────────────────────────────────────────────
+function matchPattern(word, pattern) {
+  if (word.length !== pattern.length) return false;
+  for (let i = 0; i < pattern.length; i++) {
+    if (pattern[i] !== '.' && pattern[i] !== word[i]) return false;
+  }
+  return true;
+}
+
+function findWords(pattern, mustContain, mustStart, mustEnd) {
+  const p = pattern.toLowerCase().replace(/[^a-z.]/g, '');
+  if (!p || p.length < 2) return [];
+
+  const mc = mustContain.toLowerCase().trim();
+  const ms = mustStart.toLowerCase().trim();
+  const me = mustEnd.toLowerCase().trim();
+
+  return DICT.filter(word => {
+    if (!matchPattern(word, p)) return false;
+    if (mc && !word.includes(mc)) return false;
+    if (ms && word[0] !== ms) return false;
+    if (me && word[word.length - 1] !== me) return false;
+    return true;
+  }).sort();
+}
+
+// ── UI ────────────────────────────────────────────────────────────────────
+const patternInput = document.getElementById('patternInput');
+const searchBtn    = document.getElementById('searchBtn');
+const clearBtn     = document.getElementById('clearBtn');
+const mustContain  = document.getElementById('mustContain');
+const mustStart    = document.getElementById('mustStart');
+const mustEnd      = document.getElementById('mustEnd');
+const resultsArea  = document.getElementById('results-area');
+
+function renderResults() {
+  const raw     = patternInput.value.trim();
+  const pattern = raw.replace(/\s/g, '').toLowerCase();
+
+  if (!pattern || pattern.length < 2) {
+    resultsArea.innerHTML = '<p class="hint-text">Enter a pattern above and press <em>Find Words</em> to begin.</p>';
+    return;
+  }
+
+  const results = findWords(
+    pattern,
+    mustContain.value,
+    mustStart.value,
+    mustEnd.value
+  );
+
+  if (results.length === 0) {
+    resultsArea.innerHTML = `
+      <p class="results-meta">Pattern: <strong>${pattern.toUpperCase()}</strong> &nbsp;·&nbsp; ${pattern.length} letters</p>
+      <p class="no-results">No matches found. Try fewer filters, or check your pattern for errors.</p>`;
+    return;
+  }
+
+  const chips = results.map((w, i) =>
+    `<span class="word-chip" style="animation-delay:${Math.min(i * 18, 300)}ms">${w.toUpperCase()}</span>`
+  ).join('');
+
+  resultsArea.innerHTML = `
+    <p class="results-meta"><strong>${results.length}</strong> match${results.length !== 1 ? 'es' : ''} for pattern <strong>${pattern.toUpperCase()}</strong></p>
+    <div class="word-grid">${chips}</div>`;
+}
+
+searchBtn.addEventListener('click', renderResults);
+
+patternInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter') renderResults();
+});
+
+clearBtn.addEventListener('click', () => {
+  patternInput.value = '';
+  mustContain.value  = '';
+  mustStart.value    = '';
+  mustEnd.value      = '';
+  resultsArea.innerHTML = '<p class="hint-text">Enter a pattern above and press <em>Find Words</em> to begin.</p>';
+  patternInput.focus();
+});
+
+// uppercase input display
+patternInput.addEventListener('input', () => {
+  const pos = patternInput.selectionStart;
+  patternInput.value = patternInput.value.toUpperCase();
+  patternInput.setSelectionRange(pos, pos);
+});
+
+['mustContain','mustStart','mustEnd'].forEach(id => {
+  document.getElementById(id).addEventListener('input', function() {
+    this.value = this.value.toUpperCase();
+  });
+});
+</script>
+</body>
+</html>

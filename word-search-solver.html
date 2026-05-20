@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Word Search Solver — Stillwater Puzzle Tools</title>
+  <meta name="description" content="Free word search solver. Paste your grid, type the word you're looking for, and find it instantly. All directions supported." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Serif+4:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --navy:#1b2a3f; --navy-mid:#243447; --navy-lite:#2e4260;
+      --slate:#4a6580; --slate-lite:#6b8faa;
+      --warm:#c9a96e; --warm-lite:#e2c99a;
+      --cream:#f5f0e8; --cream-mid:#ede6d6;
+      --text-main:#1b2a3f; --text-mute:#6b7f8f;
+      --white:#ffffff; --radius:6px;
+      --shadow:0 2px 16px rgba(27,42,63,0.10);
+      --hit:#2e7d4f; --hit-lite:#e8f4ec;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Source Serif 4',Georgia,serif;background:var(--cream);color:var(--text-main);min-height:100vh;display:flex;flex-direction:column;}
+
+    header{background:var(--navy);padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:64px;box-shadow:0 2px 12px rgba(0,0,0,0.25);position:sticky;top:0;z-index:100;}
+    .logo{display:flex;align-items:baseline;gap:0.5rem;text-decoration:none;}
+    .logo-main{font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:700;color:var(--warm-lite);}
+    .logo-sub{font-size:0.75rem;font-weight:300;font-style:italic;color:var(--slate-lite);letter-spacing:0.06em;}
+    .nav-back{font-size:0.78rem;font-style:italic;color:var(--slate-lite);text-decoration:none;transition:color 0.15s;}
+    .nav-back:hover{color:var(--warm-lite);}
+
+    .hero{background:linear-gradient(135deg,var(--navy-mid) 0%,var(--navy-lite) 100%);padding:2.5rem 1.5rem 2rem;text-align:center;border-bottom:3px solid var(--warm);}
+    .hero h1{font-family:'Playfair Display',serif;font-size:clamp(1.6rem,4vw,2.4rem);font-weight:600;color:var(--cream);line-height:1.2;margin-bottom:0.5rem;}
+    .hero h1 span{color:var(--warm);}
+    .hero p{font-size:0.95rem;font-weight:300;font-style:italic;color:var(--slate-lite);max-width:480px;margin:0 auto;}
+
+    .page{display:grid;grid-template-columns:1fr 260px;gap:1.5rem;max-width:900px;margin:2rem auto;padding:0 1.5rem;flex:1;}
+    @media(max-width:680px){.page{grid-template-columns:1fr;}.sidebar{order:2;}}
+
+    .tool-card{background:var(--white);border-radius:10px;box-shadow:var(--shadow);overflow:hidden;}
+    .tool-card-header{background:var(--navy);padding:1rem 1.5rem;display:flex;align-items:center;gap:0.6rem;}
+    .tool-card-header .icon{font-size:1.2rem;}
+    .tool-card-header h2{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:600;color:var(--cream);}
+    .tool-body{padding:1.5rem;}
+
+    .instructions{background:var(--cream-mid);border-left:3px solid var(--warm);border-radius:0 var(--radius) var(--radius) 0;padding:0.75rem 1rem;margin-bottom:1.25rem;font-size:0.85rem;color:var(--text-mute);line-height:1.6;}
+    .instructions strong{color:var(--navy);}
+
+    .input-label{font-family:'Playfair Display',serif;font-size:0.9rem;font-weight:600;color:var(--navy);display:block;margin-bottom:0.4rem;}
+
+    .word-row{display:flex;gap:0.5rem;margin-bottom:1.25rem;}
+    .word-input{flex:1;font-family:'Source Serif 4',serif;font-size:1.1rem;letter-spacing:0.1em;padding:0.65rem 1rem;border:2px solid var(--cream-mid);border-radius:var(--radius);background:var(--cream);color:var(--navy);text-transform:uppercase;transition:border-color 0.2s;outline:none;}
+    .word-input:focus{border-color:var(--warm);background:var(--white);}
+    .word-input::placeholder{text-transform:none;letter-spacing:0;font-style:italic;color:#aab;font-size:0.9rem;}
+
+    .btn-search{font-family:'Playfair Display',serif;font-size:0.95rem;font-weight:600;background:var(--navy);color:var(--warm-lite);border:none;border-radius:var(--radius);padding:0 1.25rem;cursor:pointer;white-space:nowrap;transition:background 0.18s,transform 0.12s;}
+    .btn-search:hover{background:var(--navy-lite);transform:translateY(-1px);}
+
+    .grid-label-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:0.4rem;}
+    .grid-hint{font-size:0.75rem;font-style:italic;color:var(--text-mute);}
+
+    .grid-textarea{width:100%;font-family:'Courier New',monospace;font-size:0.95rem;letter-spacing:0.18em;line-height:1.7;padding:0.75rem 1rem;border:2px solid var(--cream-mid);border-radius:var(--radius);background:var(--cream);color:var(--navy);resize:vertical;min-height:180px;text-transform:uppercase;transition:border-color 0.2s;outline:none;}
+    .grid-textarea:focus{border-color:var(--warm);background:var(--white);}
+    .grid-textarea::placeholder{text-transform:none;letter-spacing:0;font-style:italic;color:#aab;font-size:0.85rem;line-height:1.8;}
+
+    .btn-row{display:flex;gap:0.75rem;margin-top:1rem;}
+    .btn-clear{font-family:'Source Serif 4',serif;font-size:0.8rem;font-style:italic;color:var(--slate);background:none;border:1.5px solid var(--cream-mid);border-radius:var(--radius);padding:0.5rem 0.9rem;cursor:pointer;transition:color 0.18s,border-color 0.18s;}
+    .btn-clear:hover{color:var(--navy);border-color:var(--slate-lite);}
+
+    .btn-sample{font-family:'Source Serif 4',serif;font-size:0.8rem;font-style:italic;color:var(--slate);background:none;border:1.5px solid var(--cream-mid);border-radius:var(--radius);padding:0.5rem 0.9rem;cursor:pointer;transition:color 0.18s,border-color 0.18s;}
+    .btn-sample:hover{color:var(--navy);border-color:var(--slate-lite);}
+
+    .divider{height:1px;background:var(--cream-mid);margin:1.25rem 0;}
+
+    #results-area{min-height:80px;}
+    .hint-text{font-style:italic;color:var(--text-mute);font-size:0.88rem;padding:0.75rem 0;}
+    .results-meta{font-size:0.8rem;font-style:italic;color:var(--text-mute);margin-bottom:1rem;}
+    .results-meta strong{color:var(--navy);font-style:normal;}
+
+    /* VISUAL GRID */
+    .grid-display{overflow-x:auto;margin-top:0.5rem;}
+    .grid-table{border-collapse:separate;border-spacing:2px;margin:0 auto;}
+    .grid-table td{width:28px;height:28px;text-align:center;vertical-align:middle;font-family:'Playfair Display',serif;font-size:0.85rem;font-weight:600;border-radius:3px;background:var(--cream);color:var(--navy);transition:background 0.2s,color 0.2s;}
+    .grid-table td.hit{background:var(--hit);color:var(--white);animation:cellPop 0.25s ease both;}
+    @keyframes cellPop{from{transform:scale(0.8);opacity:0;}to{transform:scale(1);opacity:1;}}
+
+    .found-badge{display:inline-flex;align-items:center;gap:0.5rem;background:var(--hit-lite);border:1.5px solid var(--hit);border-radius:6px;padding:0.5rem 1rem;margin-bottom:1rem;font-family:'Playfair Display',serif;font-size:0.9rem;color:var(--hit);}
+    .not-found-badge{display:inline-flex;align-items:center;gap:0.5rem;background:#fef3f3;border:1.5px solid #d9534f;border-radius:6px;padding:0.5rem 1rem;margin-bottom:1rem;font-family:'Playfair Display',serif;font-size:0.9rem;color:#c0392b;}
+
+    /* SIDEBAR */
+    .sidebar{display:flex;flex-direction:column;gap:1.25rem;}
+    .side-card{background:var(--white);border-radius:10px;box-shadow:var(--shadow);overflow:hidden;}
+    .side-card-header{background:var(--navy);padding:0.65rem 1rem;}
+    .side-card-header h3{font-family:'Playfair Display',serif;font-size:0.85rem;font-weight:600;color:var(--warm-lite);letter-spacing:0.03em;}
+    .side-card-body{padding:1rem;}
+
+    .how-list{list-style:none;counter-reset:steps;display:flex;flex-direction:column;gap:0.6rem;}
+    .how-list li{counter-increment:steps;display:flex;gap:0.6rem;font-size:0.8rem;color:var(--text-mute);line-height:1.5;align-items:flex-start;}
+    .how-list li::before{content:counter(steps);font-family:'Playfair Display',serif;font-size:0.75rem;font-weight:700;color:var(--white);background:var(--warm);min-width:1.25rem;height:1.25rem;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:0.1rem;}
+
+    .tools-nav{display:flex;flex-direction:column;gap:0.5rem;}
+    .tools-nav a{display:flex;align-items:center;gap:0.6rem;text-decoration:none;padding:0.6rem 0.75rem;border-radius:6px;border:1.5px solid var(--cream-mid);transition:background 0.15s,border-color 0.15s;}
+    .tools-nav a:hover{background:var(--cream);border-color:var(--slate-lite);}
+    .tools-nav a .tn-icon{font-size:1rem;}
+    .tools-nav a .tn-name{font-family:'Playfair Display',serif;font-size:0.85rem;font-weight:600;color:var(--navy);}
+    .tools-nav a .tn-desc{font-size:0.72rem;font-style:italic;color:var(--text-mute);}
+    .tools-nav a.active{background:var(--navy);border-color:var(--navy);}
+    .tools-nav a.active .tn-name{color:var(--warm-lite);}
+    .tools-nav a.active .tn-desc{color:var(--slate-lite);}
+
+    .promo-item{display:flex;flex-direction:column;gap:0.3rem;padding:0.65rem 0;border-bottom:1px solid var(--cream-mid);}
+    .promo-item:last-child{border-bottom:none;padding-bottom:0;}
+    .promo-item:first-child{padding-top:0;}
+    .promo-item a{font-family:'Playfair Display',serif;font-size:0.88rem;font-weight:600;color:var(--navy);text-decoration:none;line-height:1.3;transition:color 0.15s;}
+    .promo-item a:hover{color:var(--slate);}
+    .promo-item .promo-desc{font-size:0.75rem;font-style:italic;color:var(--text-mute);line-height:1.4;}
+    .promo-tag{display:inline-block;font-size:0.65rem;letter-spacing:0.06em;text-transform:uppercase;background:var(--cream-mid);color:var(--slate);border-radius:3px;padding:0.15rem 0.4rem;width:fit-content;}
+    .promo-tag.free{background:#e8f4ec;color:#3a7a50;}
+    .promo-tag.book{background:#e8eef4;color:#2e5080;}
+
+    .ad-placeholder{background:var(--cream-mid);border:1.5px dashed #c5baa8;border-radius:var(--radius);height:130px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.3rem;}
+    .ad-placeholder span{font-size:0.7rem;font-style:italic;color:#aaa;letter-spacing:0.04em;}
+
+    footer{background:var(--navy);color:var(--slate-lite);text-align:center;padding:1.25rem 1.5rem;font-size:0.75rem;font-style:italic;margin-top:auto;line-height:1.8;}
+    footer a{color:var(--warm-lite);text-decoration:none;}
+    footer a:hover{text-decoration:underline;}
+    .footer-links{display:flex;justify-content:center;gap:1.5rem;margin-top:0.4rem;flex-wrap:wrap;}
+  </style>
+</head>
+<body>
+
+<header>
+  <a class="logo" href="index.html">
+    <span class="logo-main">Stillwater</span>
+    <span class="logo-sub">puzzle tools</span>
+  </a>
+  <a class="nav-back" href="index.html">← All Tools</a>
+</header>
+
+<div class="hero">
+  <h1>Word Search <span>Solver</span></h1>
+  <p>Paste your grid, type the word you're hunting, and find it instantly in any direction.</p>
+</div>
+
+<div class="page">
+  <main>
+    <div class="tool-card">
+      <div class="tool-card-header">
+        <span class="icon">⊞</span>
+        <h2>Find a Word in Your Grid</h2>
+      </div>
+      <div class="tool-body">
+
+        <div class="instructions">
+          <strong>Step 1:</strong> Type the word you're looking for. &nbsp;<strong>Step 2:</strong> Paste or type your grid below — one row per line, letters separated by spaces or run together. &nbsp;<strong>Step 3:</strong> Hit <em>Find It</em>.
+        </div>
+
+        <label class="input-label" for="wordInput">Word to find</label>
+        <div class="word-row">
+          <input id="wordInput" class="word-input" type="text" placeholder="e.g.  PUZZLE" maxlength="30" autocomplete="off" autocorrect="off" spellcheck="false" />
+          <button class="btn-search" id="searchBtn">Find It</button>
+        </div>
+
+        <div class="grid-label-row">
+          <label class="input-label" for="gridInput" style="margin-bottom:0;">Your Grid</label>
+          <span class="grid-hint">One row per line · letters run together or space-separated</span>
+        </div>
+        <textarea id="gridInput" class="grid-textarea" placeholder="Example:
+ABPUZZLEX
+CDEFGHIJK
+LMNOPQRST
+UVWXYZABC"></textarea>
+
+        <div class="btn-row">
+          <button class="btn-search" id="findBtn" style="padding:0.55rem 1.25rem;">Find It</button>
+          <button class="btn-sample" id="sampleBtn">Load sample grid</button>
+          <button class="btn-clear" id="clearBtn">Clear all</button>
+        </div>
+
+        <div class="divider"></div>
+        <div id="results-area">
+          <p class="hint-text">Enter a word and paste your grid above, then press <em>Find It</em>.</p>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <aside class="sidebar">
+
+    <div class="side-card">
+      <div class="side-card-header"><h3>How to use</h3></div>
+      <div class="side-card-body">
+        <ol class="how-list">
+          <li>Type the word you're trying to find</li>
+          <li>Copy your word search grid and paste it in the box</li>
+          <li>Press Find It — the solver checks all 8 directions</li>
+          <li>Found letters light up green in the grid display</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="side-card">
+      <div class="side-card-header"><h3>All Tools</h3></div>
+      <div class="side-card-body">
+        <nav class="tools-nav">
+          <a href="crossword-helper.html">
+            <span class="tn-icon">✦</span>
+            <span style="display:flex;flex-direction:column;gap:0.1rem;">
+              <span class="tn-name">Crossword Helper</span>
+              <span class="tn-desc">Fill in the blanks</span>
+            </span>
+          </a>
+          <a href="word-search-solver.html" class="active">
+            <span class="tn-icon">⊞</span>
+            <span style="display:flex;flex-direction:column;gap:0.1rem;">
+              <span class="tn-name">Word Search Solver</span>
+              <span class="tn-desc">Find words in a grid</span>
+            </span>
+          </a>
+          <a href="hidden-word-finder.html">
+            <span class="tn-icon">◈</span>
+            <span style="display:flex;flex-direction:column;gap:0.1rem;">
+              <span class="tn-name">Hidden Word Finder</span>
+              <span class="tn-desc">Words hiding in letters</span>
+            </span>
+          </a>
+        </nav>
+      </div>
+    </div>
+
+    <div class="side-card">
+      <div class="side-card-header"><h3>More from Stillwater</h3></div>
+      <div class="side-card-body">
+        <div class="promo-item">
+          <span class="promo-tag free">Free</span>
+          <a href="https://gum.new/gum/cmnfp6o5h000b04juex0j1ux3" target="_blank" rel="noopener">Free 10-Page Puzzle Pack</a>
+          <span class="promo-desc">Printable puzzles — no screen needed</span>
+        </div>
+        <div class="promo-item">
+          <span class="promo-tag book">Puzzle Books</span>
+          <a href="https://www.amazon.com/stores/author/B0FFSMGDFL/allbooks" target="_blank" rel="noopener">Stillwater Puzzle Press on Amazon</a>
+          <span class="promo-desc">78+ paperback puzzle books for adults</span>
+        </div>
+        <div class="promo-item">
+          <span class="promo-tag free">Free</span>
+          <a href="https://gum.new/gum/cmn9nk0wh000204kz2mp29d3u" target="_blank" rel="noopener">Put the Phone Down</a>
+          <span class="promo-desc">A free guide to reclaiming your focus</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-card">
+      <div class="side-card-header"><h3>Advertisement</h3></div>
+      <div class="side-card-body">
+        <div class="ad-placeholder">
+          <span>Ad space</span><span>Google AdSense</span>
+        </div>
+      </div>
+    </div>
+
+  </aside>
+</div>
+
+<footer>
+  <div>Stillwater Puzzle Tools &nbsp;·&nbsp; Free word puzzle helpers for offline living</div>
+  <div class="footer-links">
+    <a href="index.html">All Tools</a>
+    <a href="https://www.amazon.com/stores/author/B0FFSMGDFL/allbooks" target="_blank" rel="noopener">Amazon Books</a>
+    <a href="https://stillwaterfocustools.gumroad.com" target="_blank" rel="noopener">Gumroad Shop</a>
+  </div>
+  <div style="margin-top:0.5rem;color:#4a6580;">© 2026 Stillwater Publishing. No wifi required.</div>
+</footer>
+
+<script>
+const SAMPLE_GRID = `ABPUZZLEXQ\nCDEFGHIJKL\nMNOPQRSTUV\nWXYZABCDEF\nGHIJKLMNOP\nQRSTUVWXYZ\nABCDEFGHIJ\nKLMNOPQRST\nUVWXYZABCD\nEFGHIJKLMN`;
+const SAMPLE_WORD = 'PUZZLE';
+
+function parseGrid(raw) {
+  return raw.trim().split('\n')
+    .map(row => row.replace(/\s+/g,'').toUpperCase().split(''))
+    .filter(row => row.length > 0);
+}
+
+const DIRS = [
+  [0,1],[0,-1],[1,0],[-1,0],
+  [1,1],[1,-1],[-1,1],[-1,-1]
+];
+
+function searchGrid(grid, word) {
+  const hits = [];
+  const rows = grid.length;
+  if (!rows) return hits;
+  const cols = grid[0].length;
+  const W = word.toUpperCase();
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      for (const [dr, dc] of DIRS) {
+        let found = true;
+        const cells = [];
+        for (let i = 0; i < W.length; i++) {
+          const nr = r + dr*i, nc = c + dc*i;
+          if (nr < 0 || nr >= rows || nc < 0 || nc >= cols || grid[nr][nc] !== W[i]) { found = false; break; }
+          cells.push([nr, nc]);
+        }
+        if (found) hits.push(cells);
+      }
+    }
+  }
+  return hits;
+}
+
+function dirLabel(cells) {
+  if (cells.length < 2) return '';
+  const dr = cells[1][0]-cells[0][0], dc = cells[1][1]-cells[0][1];
+  const map = {
+    '0,1':'left → right','0,-1':'right → left',
+    '1,0':'top → bottom','-1,0':'bottom → top',
+    '1,1':'diagonal ↘','1,-1':'diagonal ↙',
+    '-1,1':'diagonal ↗','-1,-1':'diagonal ↖'
+  };
+  return map[`${dr},${dc}`] || 'diagonal';
+}
+
+function renderGrid(grid, allHitCells) {
+  const hitSet = new Set(allHitCells.map(([r,c])=>`${r},${c}`));
+  let html = '<div class="grid-display"><table class="grid-table">';
+  for (let r = 0; r < grid.length; r++) {
+    html += '<tr>';
+    for (let c = 0; c < grid[r].length; c++) {
+      const cls = hitSet.has(`${r},${c}`) ? ' class="hit"' : '';
+      html += `<td${cls}>${grid[r][c]}</td>`;
+    }
+    html += '</tr>';
+  }
+  html += '</table></div>';
+  return html;
+}
+
+function doSearch() {
+  const word = document.getElementById('wordInput').value.trim();
+  const rawGrid = document.getElementById('gridInput').value;
+  const area = document.getElementById('results-area');
+
+  if (!word) { area.innerHTML = '<p class="hint-text">Please enter a word to search for.</p>'; return; }
+  if (!rawGrid.trim()) { area.innerHTML = '<p class="hint-text">Please paste your word search grid.</p>'; return; }
+
+  const grid = parseGrid(rawGrid);
+  if (!grid.length || !grid[0].length) { area.innerHTML = '<p class="hint-text">Couldn\'t read the grid. Make sure each row is on its own line.</p>'; return; }
+
+  const hits = searchGrid(grid, word);
+  const allHitCells = hits.flat();
+
+  if (!hits.length) {
+    area.innerHTML = `
+      <div class="not-found-badge">✗ &nbsp; <strong>${word.toUpperCase()}</strong> not found in this grid</div>
+      ${renderGrid(grid, [])}
+      <p class="hint-text" style="margin-top:0.75rem;">Double-check the spelling, or try loading the sample grid to test.</p>`;
+    return;
+  }
+
+  const locationLines = hits.map((cells, i) =>
+    `<li>Found at row ${cells[0][0]+1}, column ${cells[0][1]+1} — <em>${dirLabel(cells)}</em></li>`
+  ).join('');
+
+  area.innerHTML = `
+    <div class="found-badge">✓ &nbsp; <strong>${word.toUpperCase()}</strong> found ${hits.length === 1 ? 'once' : hits.length + ' times'}!</div>
+    <p class="results-meta" style="margin-bottom:0.75rem;"><ul style="padding-left:1.2rem;display:flex;flex-direction:column;gap:0.3rem;">${locationLines}</ul></p>
+    ${renderGrid(grid, allHitCells)}`;
+}
+
+document.getElementById('findBtn').addEventListener('click', doSearch);
+document.getElementById('searchBtn').addEventListener('click', doSearch);
+document.getElementById('wordInput').addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
+
+document.getElementById('sampleBtn').addEventListener('click', () => {
+  document.getElementById('gridInput').value = SAMPLE_GRID;
+  document.getElementById('wordInput').value = SAMPLE_WORD;
+  doSearch();
+});
+
+document.getElementById('clearBtn').addEventListener('click', () => {
+  document.getElementById('wordInput').value = '';
+  document.getElementById('gridInput').value = '';
+  document.getElementById('results-area').innerHTML = '<p class="hint-text">Enter a word and paste your grid above, then press <em>Find It</em>.</p>';
+});
+
+document.getElementById('wordInput').addEventListener('input', function() {
+  const pos = this.selectionStart;
+  this.value = this.value.toUpperCase();
+  this.setSelectionRange(pos, pos);
+});
+document.getElementById('gridInput').addEventListener('input', function() {
+  this.value = this.value.toUpperCase();
+});
+</script>
+</body>
+</html>
