@@ -3,239 +3,664 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Stillwater Puzzle Tools — Free Word Puzzle Helpers</title>
-  <meta name="description" content="Free online puzzle tools from Stillwater. Crossword helper, word search solver, hidden word finder. No wifi required — just your brain and a little help." />
+  <title>Stillwater Puzzle Tools — Free Word & Number Puzzle Helpers</title>
+  <meta name="description" content="Five free puzzle tools in one place. Crossword helper, word search solver, hidden word finder, Sudoku tools, and word descrambler. No signup, no download." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --navy:      #1b2a3f;
-      --navy-mid:  #243447;
-      --navy-lite: #2e4260;
-      --slate:     #4a6580;
-      --slate-lite:#6b8faa;
-      --warm:      #c9a96e;
-      --warm-lite: #e2c99a;
-      --cream:     #f5f0e8;
-      --cream-mid: #ede6d6;
-      --text-main: #1b2a3f;
-      --text-mute: #6b7f8f;
+      --navy:      #1a2535;
+      --navy-2:    #243044;
+      --navy-3:    #2d3d57;
+      --slate:     #4a6075;
+      --slate-2:   #6a8898;
+      --gold:      #c8973f;
+      --gold-2:    #e0b96a;
+      --gold-3:    #f0d9a8;
+      --cream:     #f6f0e4;
+      --cream-2:   #ede4d0;
+      --cream-3:   #e2d8c0;
       --white:     #ffffff;
-      --radius:    8px;
-      --shadow:    0 2px 20px rgba(27,42,63,0.10);
+      --text:      #1a2535;
+      --muted:     #6a7d8a;
+      --r:         6px;
+      --shadow-sm: 0 1px 4px rgba(26,37,53,0.08);
+      --shadow-md: 0 4px 24px rgba(26,37,53,0.12);
+      --shadow-lg: 0 8px 48px rgba(26,37,53,0.16);
     }
+
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Source Serif 4', Georgia, serif; background: var(--cream); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; }
 
-    /* HEADER */
-    header { background: var(--navy); padding: 0 1.5rem; display: flex; align-items: center; justify-content: space-between; height: 64px; box-shadow: 0 2px 12px rgba(0,0,0,0.25); position: sticky; top: 0; z-index: 100; }
-    .logo { display: flex; align-items: baseline; gap: 0.5rem; text-decoration: none; }
-    .logo-main { font-family: 'Playfair Display', serif; font-size: 1.25rem; font-weight: 700; color: var(--warm-lite); letter-spacing: 0.01em; }
-    .logo-sub { font-family: 'Source Serif 4', serif; font-size: 0.75rem; font-weight: 300; font-style: italic; color: var(--slate-lite); letter-spacing: 0.06em; }
-    .tagline-pill { font-size: 0.7rem; font-family: 'Source Serif 4', serif; font-style: italic; color: var(--slate-lite); background: var(--navy-lite); padding: 0.25rem 0.75rem; border-radius: 20px; letter-spacing: 0.04em; white-space: nowrap; }
+    html { scroll-behavior: smooth; }
 
-    /* HERO */
-    .hero { background: linear-gradient(135deg, var(--navy) 0%, var(--navy-lite) 100%); padding: 4rem 1.5rem 3.5rem; text-align: center; border-bottom: 3px solid var(--warm); position: relative; overflow: hidden; }
-    .hero::before { content: ''; position: absolute; inset: 0; background-image: radial-gradient(circle at 20% 50%, rgba(201,169,110,0.07) 0%, transparent 60%), radial-gradient(circle at 80% 20%, rgba(107,143,170,0.08) 0%, transparent 50%); }
-    .hero-inner { position: relative; max-width: 620px; margin: 0 auto; }
-    .hero-eyebrow { font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--warm); font-weight: 400; margin-bottom: 1rem; }
-    .hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 3rem); font-weight: 700; color: var(--cream); line-height: 1.15; margin-bottom: 1rem; }
-    .hero h1 em { color: var(--warm); font-style: normal; }
-    .hero p { font-size: 1rem; font-weight: 300; font-style: italic; color: var(--slate-lite); line-height: 1.7; max-width: 460px; margin: 0 auto 2rem; }
-    .hero-badge { display: inline-block; font-size: 0.75rem; font-style: italic; color: var(--warm-lite); background: rgba(201,169,110,0.12); border: 1px solid rgba(201,169,110,0.25); border-radius: 20px; padding: 0.35rem 1rem; letter-spacing: 0.05em; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+    }
 
-    /* TOOLS GRID */
-    .tools-section { max-width: 860px; margin: 3rem auto; padding: 0 1.5rem; flex: 1; }
-    .section-label { font-family: 'Playfair Display', serif; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--slate); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem; }
-    .section-label::after { content: ''; flex: 1; height: 1px; background: var(--cream-mid); }
+    /* ── MASTHEAD ─────────────────────────────────────────────────────── */
+    .masthead {
+      background: var(--navy);
+      border-bottom: 1px solid rgba(200,151,63,0.2);
+      position: sticky;
+      top: 0;
+      z-index: 200;
+    }
 
-    .tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem; margin-bottom: 3rem; }
+    .masthead-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
 
-    .tool-card { background: var(--white); border-radius: 12px; box-shadow: var(--shadow); overflow: hidden; text-decoration: none; color: inherit; display: flex; flex-direction: column; transition: transform 0.2s, box-shadow 0.2s; }
-    .tool-card:hover { transform: translateY(-3px); box-shadow: 0 8px 32px rgba(27,42,63,0.14); }
+    .brand {
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
+      text-decoration: none;
+    }
 
-    .tool-card-top { background: var(--navy); padding: 1.5rem; display: flex; flex-direction: column; gap: 0.5rem; }
-    .tool-icon { font-size: 1.6rem; line-height: 1; }
-    .tool-name { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 600; color: var(--warm-lite); line-height: 1.3; }
-    .tool-tag { font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--slate-lite); font-style: italic; }
+    .brand-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.35rem;
+      font-weight: 600;
+      color: var(--gold-2);
+      letter-spacing: 0.04em;
+    }
 
-    .tool-card-body { padding: 1.25rem; flex: 1; display: flex; flex-direction: column; gap: 0.75rem; }
-    .tool-desc { font-size: 0.88rem; color: var(--text-mute); line-height: 1.6; font-style: italic; flex: 1; }
-    .tool-example { background: var(--cream); border-left: 3px solid var(--warm); padding: 0.5rem 0.75rem; border-radius: 0 4px 4px 0; font-size: 0.8rem; color: var(--navy); font-family: 'Playfair Display', serif; }
-    .tool-example span { color: var(--slate); font-family: 'Source Serif 4', serif; font-size: 0.75rem; font-style: italic; display: block; margin-bottom: 0.2rem; }
-    .tool-cta { display: inline-flex; align-items: center; gap: 0.4rem; font-family: 'Playfair Display', serif; font-size: 0.85rem; font-weight: 600; color: var(--navy); margin-top: 0.25rem; }
-    .tool-cta::after { content: '→'; transition: transform 0.15s; }
-    .tool-card:hover .tool-cta::after { transform: translateX(3px); }
+    .brand-tag {
+      font-size: 0.68rem;
+      font-weight: 300;
+      color: var(--slate-2);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
 
-    /* PROMO STRIP */
-    .promo-strip { background: var(--navy); border-radius: 12px; padding: 1.75rem 2rem; display: grid; grid-template-columns: 1fr auto; gap: 1.5rem; align-items: center; margin-bottom: 3rem; }
-    @media (max-width: 560px) { .promo-strip { grid-template-columns: 1fr; } }
-    .promo-text h3 { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 600; color: var(--warm-lite); margin-bottom: 0.4rem; }
-    .promo-text p { font-size: 0.83rem; font-style: italic; color: var(--slate-lite); line-height: 1.6; }
-    .promo-links { display: flex; flex-direction: column; gap: 0.5rem; min-width: 180px; }
-    .promo-btn { display: block; text-align: center; font-family: 'Playfair Display', serif; font-size: 0.8rem; font-weight: 600; padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; transition: opacity 0.15s; }
-    .promo-btn.primary { background: var(--warm); color: var(--navy); }
-    .promo-btn.secondary { background: transparent; border: 1px solid var(--slate); color: var(--slate-lite); }
-    .promo-btn:hover { opacity: 0.85; }
+    .masthead-nav {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
 
-    /* AD SLOT */
-    .ad-slot { background: var(--white); border-radius: 10px; box-shadow: var(--shadow); overflow: hidden; margin-bottom: 3rem; }
-    .ad-slot-header { background: var(--navy); padding: 0.5rem 1rem; }
-    .ad-slot-header span { font-size: 0.7rem; font-style: italic; color: var(--slate-lite); letter-spacing: 0.04em; }
-    .ad-placeholder { height: 110px; display: flex; align-items: center; justify-content: center; background: var(--cream-mid); border: 1.5px dashed #c5baa8; margin: 1rem; border-radius: 6px; }
-    .ad-placeholder span { font-size: 0.7rem; font-style: italic; color: #aaa; }
+    .masthead-nav a {
+      font-size: 0.75rem;
+      font-weight: 400;
+      color: var(--slate-2);
+      text-decoration: none;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      transition: color 0.15s;
+    }
 
-    /* FOOTER */
-    footer { background: var(--navy); color: var(--slate-lite); text-align: center; padding: 1.5rem; font-size: 0.75rem; font-style: italic; line-height: 1.9; }
-    footer a { color: var(--warm-lite); text-decoration: none; }
-    footer a:hover { text-decoration: underline; }
-    .footer-links { display: flex; justify-content: center; gap: 1.5rem; margin-top: 0.4rem; flex-wrap: wrap; }
+    .masthead-nav a:hover { color: var(--gold-2); }
+
+    .masthead-cta {
+      font-size: 0.7rem !important;
+      font-weight: 500 !important;
+      color: var(--navy) !important;
+      background: var(--gold);
+      padding: 0.35rem 0.85rem;
+      border-radius: 3px;
+      letter-spacing: 0.08em !important;
+      text-transform: uppercase !important;
+      transition: background 0.15s !important;
+    }
+
+    .masthead-cta:hover { background: var(--gold-2) !important; color: var(--navy) !important; }
+
+    /* ── HERO BANNER ──────────────────────────────────────────────────── */
+    .hero {
+      background: var(--navy-2);
+      border-bottom: 2px solid var(--gold);
+      padding: 2rem 2rem 1.75rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 280px; height: 280px;
+      background: radial-gradient(circle, rgba(200,151,63,0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .hero-kicker {
+      font-size: 0.65rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.5rem;
+    }
+
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+      font-weight: 600;
+      color: var(--cream);
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+      margin-bottom: 0.6rem;
+    }
+
+    .hero-title em {
+      color: var(--gold-2);
+      font-style: italic;
+    }
+
+    .hero-sub {
+      font-size: 0.88rem;
+      font-weight: 300;
+      color: var(--slate-2);
+      line-height: 1.6;
+      max-width: 480px;
+    }
+
+    .hero-stats {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      align-items: flex-end;
+    }
+
+    .stat-pill {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(200,151,63,0.15);
+      border-radius: 4px;
+      padding: 0.4rem 0.85rem;
+      white-space: nowrap;
+    }
+
+    .stat-num {
+      font-family: 'DM Mono', monospace;
+      font-size: 1.1rem;
+      color: var(--gold-2);
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 0.68rem;
+      font-weight: 400;
+      color: var(--slate-2);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    /* ── TOOLS SECTION ────────────────────────────────────────────────── */
+    .tools-section {
+      flex: 1;
+      max-width: 1100px;
+      margin: 0 auto;
+      width: 100%;
+      padding: 1.5rem 2rem 2rem;
+    }
+
+    .section-rule {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .section-rule span {
+      font-size: 0.65rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--slate);
+      white-space: nowrap;
+    }
+
+    .section-rule::before, .section-rule::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--cream-3);
+    }
+
+    /* ── TOOL GRID ────────────────────────────────────────────────────── */
+    .tool-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    @media (max-width: 900px) { .tool-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 600px) { .tool-grid { grid-template-columns: repeat(2, 1fr); } }
+
+    .tool-card {
+      background: var(--white);
+      border: 1px solid var(--cream-3);
+      border-radius: var(--r);
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+      position: relative;
+    }
+
+    .tool-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--gold);
+    }
+
+    .tool-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--gold);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.2s;
+    }
+
+    .tool-card:hover::after { transform: scaleX(1); }
+
+    .card-head {
+      background: var(--navy);
+      padding: 0.9rem 1rem 0.75rem;
+    }
+
+    .card-icon {
+      font-size: 1rem;
+      color: var(--gold);
+      margin-bottom: 0.35rem;
+      display: block;
+      font-family: 'DM Mono', monospace;
+    }
+
+    .card-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--cream);
+      line-height: 1.2;
+      margin-bottom: 0.15rem;
+    }
+
+    .card-tag {
+      font-size: 0.6rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--slate-2);
+    }
+
+    .card-body {
+      padding: 0.85rem 1rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .card-desc {
+      font-size: 0.78rem;
+      font-weight: 300;
+      color: var(--muted);
+      line-height: 1.55;
+      flex: 1;
+    }
+
+    .card-example {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--gold);
+      background: var(--cream);
+      border-left: 2px solid var(--gold);
+      padding: 0.3rem 0.5rem;
+      border-radius: 0 3px 3px 0;
+    }
+
+    .card-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      font-weight: 500;
+      color: var(--navy);
+      letter-spacing: 0.04em;
+      margin-top: 0.25rem;
+    }
+
+    .card-link .arrow {
+      color: var(--gold);
+      transition: transform 0.15s;
+    }
+
+    .tool-card:hover .arrow { transform: translateX(3px); }
+
+    /* ── PROMO STRIP ──────────────────────────────────────────────────── */
+    .promo-strip {
+      background: var(--navy);
+      border-radius: var(--r);
+      padding: 1.25rem 1.5rem;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 2rem;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    @media (max-width: 600px) { .promo-strip { grid-template-columns: 1fr; gap: 1rem; } }
+
+    .promo-eyebrow {
+      font-size: 0.62rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.3rem;
+    }
+
+    .promo-headline {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--cream);
+      margin-bottom: 0.3rem;
+    }
+
+    .promo-body {
+      font-size: 0.78rem;
+      font-weight: 300;
+      color: var(--slate-2);
+      line-height: 1.6;
+    }
+
+    .promo-links {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      min-width: 170px;
+    }
+
+    .promo-btn {
+      display: block;
+      text-align: center;
+      font-size: 0.72rem;
+      font-weight: 500;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      text-decoration: none;
+      letter-spacing: 0.05em;
+      transition: opacity 0.15s, background 0.15s;
+    }
+
+    .promo-btn.gold { background: var(--gold); color: var(--navy); }
+    .promo-btn.gold:hover { background: var(--gold-2); }
+    .promo-btn.outline { border: 1px solid rgba(200,151,63,0.3); color: var(--slate-2); }
+    .promo-btn.outline:hover { border-color: var(--gold-2); color: var(--gold-2); }
+
+    /* ── AD SLOT ──────────────────────────────────────────────────────── */
+    .ad-row {
+      background: var(--white);
+      border: 1px solid var(--cream-3);
+      border-radius: var(--r);
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+    }
+
+    .ad-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 0.3rem 1rem;
+      border-bottom: 1px solid var(--cream-3);
+    }
+
+    .ad-zone {
+      height: 90px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--cream);
+    }
+
+    .ad-zone span {
+      font-size: 0.7rem;
+      font-style: italic;
+      color: var(--cream-3);
+    }
+
+    /* ── FOOTER ───────────────────────────────────────────────────────── */
+    footer {
+      background: var(--navy);
+      border-top: 1px solid rgba(200,151,63,0.15);
+      padding: 1.25rem 2rem;
+    }
+
+    .footer-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .footer-copy {
+      font-size: 0.72rem;
+      color: var(--slate);
+      font-style: italic;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      font-size: 0.72rem;
+      color: var(--slate-2);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    .footer-links a:hover { color: var(--gold-2); }
+
+    /* ── ANIMATIONS ───────────────────────────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .tool-card {
+      animation: fadeUp 0.4s ease both;
+    }
+
+    .tool-card:nth-child(1) { animation-delay: 0.05s; }
+    .tool-card:nth-child(2) { animation-delay: 0.10s; }
+    .tool-card:nth-child(3) { animation-delay: 0.15s; }
+    .tool-card:nth-child(4) { animation-delay: 0.20s; }
+    .tool-card:nth-child(5) { animation-delay: 0.25s; }
   </style>
 </head>
 <body>
 
-<header>
-  <a class="logo" href="index.html">
-    <span class="logo-main">Stillwater</span>
-    <span class="logo-sub">puzzle tools</span>
-  </a>
-  <span class="tagline-pill">No wifi required</span>
+<!-- MASTHEAD -->
+<header class="masthead">
+  <div class="masthead-inner">
+    <a class="brand" href="index.html">
+      <span class="brand-name">Stillwater</span>
+      <span class="brand-tag">Puzzle Tools</span>
+    </a>
+    <nav class="masthead-nav">
+      <a href="https://www.amazon.com/stores/author/B0FFSMGDFL/allbooks" target="_blank" rel="noopener">Puzzle Books</a>
+      <a href="https://stillwaterfocustools.gumroad.com" target="_blank" rel="noopener">Shop</a>
+      <a href="https://gum.new/gum/cmnfp6o5h000b04juex0j1ux3" target="_blank" rel="noopener" class="masthead-cta">Free Pack</a>
+    </nav>
+  </div>
 </header>
 
+<!-- HERO BANNER -->
 <div class="hero">
   <div class="hero-inner">
-    <p class="hero-eyebrow">Free · No signup · No ads on tools</p>
-    <h1>Puzzle Tools for <em>Real</em> Puzzle Lovers</h1>
-    <p>Three free helpers for crosswords, word searches, and hidden words. Built for people who prefer ink over screens.</p>
-    <span class="hero-badge">✦ &nbsp; No wifi required &nbsp; ✦</span>
+    <div>
+      <p class="hero-kicker">Free · No Signup · No Download</p>
+      <h1 class="hero-title">Puzzle Tools for <em>Real</em> Puzzle Lovers</h1>
+      <p class="hero-sub">Five free helpers for crosswords, word searches, Sudoku, and more. Built for people who prefer ink over screens.</p>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-pill">
+        <span class="stat-num">5</span>
+        <span class="stat-label">Free Tools</span>
+      </div>
+      <div class="stat-pill">
+        <span class="stat-num">0</span>
+        <span class="stat-label">Signup Required</span>
+      </div>
+      <div class="stat-pill">
+        <span class="stat-num">∞</span>
+        <span class="stat-label">Uses, Always Free</span>
+      </div>
+    </div>
   </div>
 </div>
 
+<!-- TOOLS -->
 <div class="tools-section">
 
-  <div class="section-label">Choose your tool</div>
+  <div class="section-rule"><span>Choose your tool</span></div>
 
-  <div class="tools-grid">
+  <div class="tool-grid">
 
-    <!-- CROSSWORD HELPER -->
     <a class="tool-card" href="crossword-helper.html">
-      <div class="tool-card-top">
-        <span class="tool-icon">✦</span>
-        <span class="tool-name">Crossword Helper</span>
-        <span class="tool-tag">Fill in the blanks</span>
+      <div class="card-head">
+        <span class="card-icon">✦</span>
+        <div class="card-name">Crossword Helper</div>
+        <div class="card-tag">Fill in the blanks</div>
       </div>
-      <div class="tool-card-body">
-        <p class="tool-desc">Know some letters but not all? Enter your pattern with dots for unknowns and find every matching word instantly.</p>
-        <div class="tool-example">
-          <span>Example pattern:</span>
-          P..ZLE → PUZZLE
-        </div>
-        <span class="tool-cta">Open tool</span>
+      <div class="card-body">
+        <p class="card-desc">Know some letters but not all? Enter your pattern with dots for unknowns and find every matching word.</p>
+        <div class="card-example">P..ZLE → PUZZLE</div>
+        <div class="card-link"><span>Open tool</span><span class="arrow">→</span></div>
       </div>
     </a>
 
-    <!-- WORD SEARCH SOLVER -->
     <a class="tool-card" href="word-search-solver.html">
-      <div class="tool-card-top">
-        <span class="tool-icon">⊞</span>
-        <span class="tool-name">Word Search Solver</span>
-        <span class="tool-tag">Find words in a grid</span>
+      <div class="card-head">
+        <span class="card-icon">⊞</span>
+        <div class="card-name">Word Search Solver</div>
+        <div class="card-tag">Find words in a grid</div>
       </div>
-      <div class="tool-card-body">
-        <p class="tool-desc">Paste in your word search grid and type the word you're hunting. The solver finds it and shows you exactly where it hides.</p>
-        <div class="tool-example">
-          <span>Example:</span>
-          Find PUZZLE in a 10×10 grid
-        </div>
-        <span class="tool-cta">Open tool</span>
+      <div class="card-body">
+        <p class="card-desc">Paste your grid, type the word you're hunting. The solver finds it in all 8 directions and highlights it.</p>
+        <div class="card-example">Find PUZZLE in grid</div>
+        <div class="card-link"><span>Open tool</span><span class="arrow">→</span></div>
       </div>
     </a>
 
-    <!-- HIDDEN WORD FINDER -->
     <a class="tool-card" href="hidden-word-finder.html">
-      <div class="tool-card-top">
-        <span class="tool-icon">◈</span>
-        <span class="tool-name">Hidden Word Finder</span>
-        <span class="tool-tag">Words hiding in letters</span>
+      <div class="card-head">
+        <span class="card-icon">◈</span>
+        <div class="card-name">Hidden Word Finder</div>
+        <div class="card-tag">Words hiding in letters</div>
       </div>
-      <div class="tool-card-body">
-        <p class="tool-desc">Enter any group of letters and discover every real English word hiding inside them. Perfect for anagrams and jumbles.</p>
-        <div class="tool-example">
-          <span>Example:</span>
-          PUZZLES → PLUS, SPELL, SLUE…
-        </div>
-        <span class="tool-cta">Open tool</span>
+      <div class="card-body">
+        <p class="card-desc">Enter any group of letters and discover every real English word hiding inside them. Perfect for jumbles.</p>
+        <div class="card-example">PUZZLES → PLUS, SLUE…</div>
+        <div class="card-link"><span>Open tool</span><span class="arrow">→</span></div>
       </div>
     </a>
 
-  </div>
-
-    <!-- SUDOKU -->
     <a class="tool-card" href="sudoku.html">
-      <div class="tool-card-top">
-        <span class="tool-icon">⊛</span>
-        <span class="tool-name">Sudoku Tools</span>
-        <span class="tool-tag">Solve · Hint · Validate</span>
+      <div class="card-head">
+        <span class="card-icon">⊛</span>
+        <div class="card-name">Sudoku Tools</div>
+        <div class="card-tag">Solve · Hint · Validate</div>
       </div>
-      <div class="tool-card-body">
-        <p class="tool-desc">Three Sudoku tools in one: solve any puzzle instantly, get a single-cell hint when stuck, or check your completed solution.</p>
-        <div class="tool-example"><span>Includes:</span>Solver · Hint Helper · Validator</div>
-        <span class="tool-cta">Open tool</span>
+      <div class="card-body">
+        <p class="card-desc">Three tools in one — solve any puzzle, get a gentle single-cell hint, or check your completed solution.</p>
+        <div class="card-example">Solver + Hint + Check</div>
+        <div class="card-link"><span>Open tool</span><span class="arrow">→</span></div>
       </div>
     </a>
 
-  </div>
-
-    <!-- DESCRAMBLER -->
     <a class="tool-card" href="word-descrambler.html">
-      <div class="tool-card-top">
-        <span class="tool-icon">⟳</span>
-        <span class="tool-name">Word Descrambler</span>
-        <span class="tool-tag">Unscramble + definitions</span>
+      <div class="card-head">
+        <span class="card-icon">⟳</span>
+        <div class="card-name">Word Descrambler</div>
+        <div class="card-tag">Unscramble + definitions</div>
       </div>
-      <div class="tool-card-body">
-        <p class="tool-desc">Enter scrambled letters and find every valid word — with definitions. Filter by length and sort your results. Perfect for jumbles and word games.</p>
-        <div class="tool-example"><span>Example:</span>UZZLEP → PUZZLE</div>
-        <span class="tool-cta">Open tool</span>
+      <div class="card-body">
+        <p class="card-desc">Unscramble any word and see its definition. Filter by length, sort results, find the answer fast.</p>
+        <div class="card-example">UZZLEP → PUZZLE</div>
+        <div class="card-link"><span>Open tool</span><span class="arrow">→</span></div>
       </div>
     </a>
 
-  </div>
-
-  <!-- STILLWATER PROMO -->
-  <div class="promo-strip">
-    <div class="promo-text">
-      <h3>Love puzzles? So do we.</h3>
-      <p>Stillwater Puzzle Press has 78+ printable puzzle books on Amazon — and a free 10-page puzzle pack waiting for you right now.</p>
-    </div>
-    <div class="promo-links">
-      <a class="promo-btn primary" href="https://gum.new/gum/cmnfp6o5h000b04juex0j1ux3" target="_blank" rel="noopener">Free Puzzle Pack ↗</a>
-      <a class="promo-btn secondary" href="https://www.amazon.com/stores/author/B0FFSMGDFL/allbooks" target="_blank" rel="noopener">Books on Amazon ↗</a>
-      <a class="promo-btn secondary" href="https://stillwaterfocustools.gumroad.com/l/Digital_Detox_Kit" target="_blank" rel="noopener">Digital Detox Kit ↗</a>
-    </div>
   </div>
 
   <!-- AD SLOT -->
-  <div class="ad-slot">
-    <div class="ad-slot-header"><span>Advertisement</span></div>
-    <div class="ad-placeholder">
-      <!-- Replace with Google AdSense code -->
-      <span>Google AdSense — 728×90 leaderboard</span>
+  <div class="ad-row">
+    <div class="ad-label">Advertisement</div>
+    <div class="ad-zone">
+      <!-- Replace with Google AdSense 728x90 leaderboard code -->
+      <span>Google AdSense — 728×90</span>
+    </div>
+  </div>
+
+  <!-- PROMO STRIP -->
+  <div class="promo-strip">
+    <div>
+      <p class="promo-eyebrow">From Stillwater Publishing</p>
+      <h2 class="promo-headline">Love puzzles? There's more where this came from.</h2>
+      <p class="promo-body">Stillwater Puzzle Press has 78+ printable paperback puzzle books on Amazon — and a free 10-page puzzle pack waiting for you right now. No wifi required.</p>
+    </div>
+    <div class="promo-links">
+      <a class="promo-btn gold" href="https://gum.new/gum/cmnfp6o5h000b04juex0j1ux3" target="_blank" rel="noopener">Get Free Puzzle Pack ↗</a>
+      <a class="promo-btn outline" href="https://www.amazon.com/stores/author/B0FFSMGDFL/allbooks" target="_blank" rel="noopener">Browse Amazon Books ↗</a>
+      <a class="promo-btn outline" href="https://stillwaterfocustools.gumroad.com" target="_blank" rel="noopener">Visit Gumroad Shop ↗</a>
     </div>
   </div>
 
 </div>
 
+<!-- FOOTER -->
 <footer>
-  <div>Stillwater Puzzle Tools &nbsp;·&nbsp; Free word puzzle helpers for offline living</div>
-  <div class="footer-links">
-    <a href="https://www.amazon.com/stores/author/B0FFSMGDFL/allbooks" target="_blank" rel="noopener">Amazon Books</a>
-    <a href="https://stillwaterfocustools.gumroad.com" target="_blank" rel="noopener">Gumroad Shop</a>
-    <a href="https://gum.new/gum/cmn9nk0wh000204kz2mp29d3u" target="_blank" rel="noopener">Put the Phone Down (Free)</a>
-    <a href="mailto:hello@stillwaterco.com">Contact</a>
+  <div class="footer-inner">
+    <span class="footer-copy">© 2026 Stillwater Publishing · No wifi required.</span>
+    <nav class="footer-links">
+      <a href="https://www.amazon.com/stores/author/B0FFSMGDFL/allbooks" target="_blank" rel="noopener">Amazon Books</a>
+      <a href="https://stillwaterfocustools.gumroad.com" target="_blank" rel="noopener">Gumroad Shop</a>
+      <a href="https://gum.new/gum/cmn9nk0wh000204kz2mp29d3u" target="_blank" rel="noopener">Put the Phone Down (Free)</a>
+      <a href="mailto:stillwaterfocustools@gmail.com">Contact</a>
+    </nav>
   </div>
-  <div style="margin-top:0.5rem;color:#4a6580;">© 2026 Stillwater Publishing. No wifi required.</div>
 </footer>
 
 </body>
