@@ -372,7 +372,21 @@ function renderGrid(hitCells=[]){
       const commit=()=>{
         const val=(inp.value||'').toUpperCase().replace(/[^A-Z]/g,'')||current;
         currentGrid[r][c]=val;
-        renderGrid([]);
+        // Re-run active word search if one is selected
+        if(activeChip&&activeChip._resetClicks)activeChip._resetClicks();
+        if(activeChip&&!activeChip.classList.contains('found')){
+          const word=activeChip.textContent.trim();
+          const hits=searchGrid(currentGrid,word);
+          if(hits.length){
+            renderGrid(hits[0]);
+          } else {
+            const fuzzyHits=fuzzySearchGrid(currentGrid,word);
+            if(fuzzyHits.length){renderGrid(fuzzyHits[0].cells);}
+            else{renderGrid([]);}
+          }
+        } else {
+          renderGrid([]);
+        }
       };
       inp.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key==='Tab'||e.key==='Escape'){e.preventDefault();commit();}});
       inp.addEventListener('blur',commit);
@@ -477,6 +491,8 @@ document.getElementById('partialClearBtn').addEventListener('click',()=>{
 
 function setupChip(chip,word){
   let clicks=0;
+  // Reset click count externally so grid edits don't break state
+  chip._resetClicks=()=>{clicks=0;};
   chip.addEventListener('click',()=>{
     if(chip.classList.contains('found')){chip.classList.remove('found');clicks=0;return;}
     clicks++;
