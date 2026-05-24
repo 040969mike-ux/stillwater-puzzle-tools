@@ -589,10 +589,27 @@ ALWAYS return this exact JSON with no other text:
     });
 
     const data=await response.json();
+    console.log('API response status:', response.status);
+    console.log('API data:', JSON.stringify(data).substring(0,500));
+    
     const text=data.content?.find(b=>b.type==='text')?.text||'';
-    const parsed=JSON.parse(text.replace(/```json|```/g,'').trim());
+    console.log('Extracted text:', text.substring(0,300));
+    
+    // Try to extract JSON even if Claude added extra text
+    let parsed = null;
+    try {
+      const jsonMatch = text.match(/\{[\s\S]*\}/);
+      if(jsonMatch) parsed = JSON.parse(jsonMatch[0]);
+    } catch(jsonErr) {
+      console.log('JSON parse error:', jsonErr.message);
+      statusText.innerHTML='<strong style="color:var(--err)">Could not parse response.</strong> Raw response: '+text.substring(0,200)+'<br><br>Please use manual entry below.';
+      status.style.cssText='display:flex !important;';
+      return;
+    }
+    
+    console.log('Parsed:', parsed);
 
-    if(parsed.grid&&parsed.words?.length){
+    if(parsed&&parsed.grid&&parsed.words?.length){
       // Show verify section instead of auto-loading
       document.getElementById('verifyGrid').value=parsed.grid;
       document.getElementById('verifyWords').value=parsed.words.join(', ');
@@ -607,7 +624,8 @@ ALWAYS return this exact JSON with no other text:
         document.getElementById('verifySection').scrollIntoView({behavior:'smooth',block:'start'});
       },1500);
     } else {
-      statusText.innerHTML='<strong>Could not read your image.</strong><br>Try these fixes:<br>• Use a screenshot instead of a photo (works much better)<br>• Make sure the puzzle is flat with no shadows<br>• Shoot straight down — no angle<br>• Make sure all rows are visible<br>Or scroll down to enter the grid manually.';
+      const gridInfo = parsed ? `Grid: ${parsed.grid ? parsed.grid.split('\n').length+' rows' : 'missing'}, Words: ${parsed.words?.length||0}` : 'No data parsed';
+      statusText.innerHTML='<strong style="color:var(--err)">Could not extract puzzle data.</strong><br>'+gridInfo+'<br><br>Try these fixes:<br>• Use a screenshot instead of a photo<br>• Make sure the puzzle is flat with no shadows<br>• Shoot straight down — no angle<br>• Make sure all rows are visible<br><br>Or scroll down to enter the grid manually.';
       status.style.cssText='display:flex !important;';
     }
   }catch(e){
