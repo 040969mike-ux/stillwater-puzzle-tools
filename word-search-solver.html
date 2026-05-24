@@ -93,6 +93,7 @@
     .grid-table{border-collapse:separate;border-spacing:2px;}
     .grid-table td{width:26px;height:26px;text-align:center;vertical-align:middle;font-family:'DM Mono',monospace;font-size:0.78rem;font-weight:500;border-radius:3px;background:var(--cream-2);color:var(--navy);transition:background 0.2s,color 0.2s;}
     .grid-table td.hit{background:var(--hit);color:var(--white);animation:cellPop 0.22s ease both;}
+    .grid-table td.empty-cell{background:#fff3cd;color:#856404;border:1.5px dashed #e6a817;font-style:italic;}
     @keyframes cellPop{from{transform:scale(0.85);opacity:0;}to{transform:scale(1);opacity:1;}}
 
     /* SIDEBAR */
@@ -292,9 +293,16 @@
 const DIRS=[[0,1],[0,-1],[1,0],[-1,0],[1,1],[1,-1],[-1,1],[-1,-1]];
 
 function parseGrid(raw){
-  return raw.trim().split('\n')
+  const rows = raw.trim().split('\n')
     .map(r=>r.replace(/\s+/g,'').toUpperCase().split(''))
     .filter(r=>r.length>0);
+  // Find max column count
+  const maxCols = Math.max(...rows.map(r=>r.length));
+  // Pad short rows with ? so empty cells are still editable
+  return rows.map(r=>{
+    while(r.length < maxCols) r.push('?');
+    return r;
+  });
 }
 
 // Exact search
@@ -352,7 +360,11 @@ function renderGrid(hitCells=[]){
     html+='<tr>';
     for(let c=0;c<currentGrid[r].length;c++){
       const cls=hitSet.has(`${r},${c}`)?' class="hit"':'';
-      html+=`<td${cls} data-r="${r}" data-c="${c}" title="Click to edit this letter" style="cursor:pointer">${currentGrid[r][c]}</td>`;
+      const letter = currentGrid[r][c];
+      const isEmpty = letter === '?' || letter === ' ' || letter === '';
+      const cellCls = cls || (isEmpty ? ' class="empty-cell"' : '');
+      const display = isEmpty ? '?' : letter;
+      html+=`<td${cellCls} data-r="${r}" data-c="${c}" title="${isEmpty?'Empty cell — click to enter the correct letter':'Click to edit this letter'}" style="cursor:pointer">${display}</td>`;
     }
     html+='</tr>';
   }
@@ -365,12 +377,13 @@ function renderGrid(hitCells=[]){
       const r=parseInt(td.dataset.r),c=parseInt(td.dataset.c);
       const current=currentGrid[r][c];
       const inp=document.createElement('input');
-      inp.type='text';inp.maxLength=1;inp.value=current;
+      inp.type='text';inp.maxLength=1;inp.value=(current==='?')?'':current;
       inp.style.cssText='width:22px;height:22px;text-align:center;font-family:DM Mono,monospace;font-size:0.78rem;font-weight:700;border:2px solid var(--gold);border-radius:3px;background:#fff8e7;color:var(--navy);padding:0;outline:none;text-transform:uppercase;';
       td.innerHTML='';td.style.padding='0';td.appendChild(inp);
       inp.focus();inp.select();
       const commit=()=>{
-        const val=(inp.value||'').toUpperCase().replace(/[^A-Z]/g,'')||current;
+        const raw_val=(inp.value||'').toUpperCase().replace(/[^A-Z]/g,'');
+        const val=raw_val||(current==='?'?'?':current);
         currentGrid[r][c]=val;
         // Re-run active word search if one is selected
         if(activeChip&&activeChip._resetClicks)activeChip._resetClicks();
