@@ -212,10 +212,24 @@
 
         <!-- WORKSPACE -->
         <div class="workspace" id="workspace">
+          <!-- PARTIAL SEARCH -->
+          <div style="margin-bottom:1.25rem;background:var(--cream-2);border:1.5px solid var(--gold);border-radius:var(--r);padding:0.85rem 1rem;">
+            <div class="workspace-label" style="margin-bottom:0.4rem;">🔍 &nbsp;Search for part of a word</div>
+            <div style="font-size:0.75rem;color:var(--muted);font-style:italic;margin-bottom:0.6rem;">Can't find RAILROAD? Type RAIL or ROAD — highlights every match in the grid so you can spot it yourself.</div>
+            <div style="display:flex;gap:0.5rem;">
+              <input id="partialInput" type="text" placeholder="Type any letters e.g. RAIL or OAD" maxlength="20"
+                style="flex:1;font-family:'DM Mono',monospace;font-size:0.95rem;letter-spacing:0.12em;padding:0.5rem 0.75rem;border:1.5px solid var(--cream-3);border-radius:var(--r);background:var(--white);color:var(--navy);text-transform:uppercase;outline:none;transition:border-color 0.2s;"
+                autocomplete="off" spellcheck="false" />
+              <button id="partialSearchBtn" class="btn btn-primary" style="padding:0 1rem;">Search</button>
+              <button id="partialClearBtn" class="btn btn-ghost" style="padding:0 0.75rem;">Clear</button>
+            </div>
+            <div id="partialResult" style="font-size:0.78rem;color:var(--muted);margin-top:0.4rem;font-style:italic;"></div>
+          </div>
+
           <div class="word-list-section" style="margin-bottom:1.25rem;">
             <div class="workspace-label">Word List — click a word when you're stuck</div>
             <div class="word-chips" id="wordChips"></div>
-            <div class="word-chip-hint">Click any word to highlight it · Click again to mark found · Red = not found in grid</div>
+            <div class="word-chip-hint">Click any word to highlight it · Click again to mark found · Red = not found in grid · <strong>Click any letter in the grid to edit it</strong></div>
           </div>
           <div class="result-panel" id="resultPanel"></div>
           <div class="workspace-label" style="margin-top:0.75rem;">Your Grid</div>
@@ -338,12 +352,32 @@ function renderGrid(hitCells=[]){
     html+='<tr>';
     for(let c=0;c<currentGrid[r].length;c++){
       const cls=hitSet.has(`${r},${c}`)?' class="hit"':'';
-      html+=`<td${cls}>${currentGrid[r][c]}</td>`;
+      html+=`<td${cls} data-r="${r}" data-c="${c}" title="Click to edit this letter" style="cursor:pointer">${currentGrid[r][c]}</td>`;
     }
     html+='</tr>';
   }
   html+='</table>';
-  document.getElementById('gridDisplay').innerHTML=html;
+  const display=document.getElementById('gridDisplay');
+  display.innerHTML=html;
+  // Make each cell editable on click
+  display.querySelectorAll('td').forEach(td=>{
+    td.addEventListener('click',()=>{
+      const r=parseInt(td.dataset.r),c=parseInt(td.dataset.c);
+      const current=currentGrid[r][c];
+      const inp=document.createElement('input');
+      inp.type='text';inp.maxLength=1;inp.value=current;
+      inp.style.cssText='width:22px;height:22px;text-align:center;font-family:DM Mono,monospace;font-size:0.78rem;font-weight:700;border:2px solid var(--gold);border-radius:3px;background:#fff8e7;color:var(--navy);padding:0;outline:none;text-transform:uppercase;';
+      td.innerHTML='';td.style.padding='0';td.appendChild(inp);
+      inp.focus();inp.select();
+      const commit=()=>{
+        const val=(inp.value||'').toUpperCase().replace(/[^A-Z]/g,'')||current;
+        currentGrid[r][c]=val;
+        renderGrid([]);
+      };
+      inp.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key==='Tab'||e.key==='Escape'){e.preventDefault();commit();}});
+      inp.addEventListener('blur',commit);
+    });
+  });
 }
 
 function findWord(word,chip){
@@ -385,6 +419,61 @@ function findWord(word,chip){
     <div class="result-location">Row ${allCells[0][0]+1}, Column ${allCells[0][1]+1} · Running ${dir}</div>
     <div style="margin-top:0.4rem;font-size:0.72rem;color:var(--muted);font-style:italic;">Click the word again to mark it found ✓</div>`;
 }
+
+// PARTIAL SEARCH
+function searchPartial(fragment){
+  const F=fragment.toUpperCase().replace(/[^A-Z]/g,'');
+  if(F.length<2)return[];
+  const hits=[];
+  const rows=currentGrid.length;
+  if(!rows)return hits;
+  const cols=currentGrid[0].length;
+  for(let r=0;r<rows;r++){
+    for(let c=0;c<cols;c++){
+      for(const[dr,dc]of DIRS){
+        let match=true;const cells=[];
+        for(let i=0;i<F.length;i++){
+          const nr=r+dr*i,nc=c+dc*i;
+          if(nr<0||nr>=rows||nc<0||nc>=cols||currentGrid[nr][nc]!==F[i]){match=false;break;}
+          cells.push([nr,nc]);
+        }
+        if(match)hits.push(cells);
+      }
+    }
+  }
+  return hits;
+}
+
+document.getElementById('partialSearchBtn').addEventListener('click',()=>{
+  const val=document.getElementById('partialInput').value.trim();
+  if(!val||val.length<2){
+    document.getElementById('partialResult').textContent='Please enter at least 2 letters.';
+    return;
+  }
+  const hits=searchPartial(val);
+  if(!hits.length){
+    renderGrid([]);
+    document.getElementById('partialResult').textContent=`No matches for "${val.toUpperCase()}" — try fewer letters.`;
+    return;
+  }
+  const allCells=hits.flat();
+  renderGrid(allCells);
+  document.getElementById('partialResult').textContent=`Found ${hits.length} match${hits.length!==1?'es':''} for "${val.toUpperCase()}" — highlighted in green.`;
+});
+
+document.getElementById('partialInput').addEventListener('keydown',e=>{
+  if(e.key==='Enter')document.getElementById('partialSearchBtn').click();
+});
+
+document.getElementById('partialInput').addEventListener('input',function(){
+  const p=this.selectionStart;this.value=this.value.toUpperCase();this.setSelectionRange(p,p);
+});
+
+document.getElementById('partialClearBtn').addEventListener('click',()=>{
+  document.getElementById('partialInput').value='';
+  document.getElementById('partialResult').textContent='';
+  renderGrid([]);
+});
 
 function setupChip(chip,word){
   let clicks=0;
