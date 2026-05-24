@@ -519,13 +519,12 @@ Return ONLY this JSON format, nothing else:
       },1500);
     } else {
       statusText.innerHTML='<strong>Could not read your image.</strong><br>Try these fixes:<br>• Use a screenshot instead of a photo (works much better)<br>• Make sure the puzzle is flat with no shadows<br>• Shoot straight down — no angle<br>• Make sure all rows are visible<br>Or scroll down to enter the grid manually.';
-      setTimeout(()=>status.classList.remove('show'),3000);
     }
   }catch(e){
     statusText.innerHTML='<strong>Could not read your image.</strong><br>Try these fixes:<br>• Use a screenshot instead of a photo (works much better)<br>• Make sure the puzzle is flat with no shadows<br>• Shoot straight down — no angle<br>• Make sure all rows are visible<br>Or scroll down to enter the grid manually.';
-    setTimeout(()=>status.classList.remove('show'),3000);
   }
 });
+
 
 // Drag and drop
 const zone=document.getElementById('uploadZone');
