@@ -473,27 +473,27 @@ document.getElementById('imageInput').addEventListener('change',async function()
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
         model:'claude-sonnet-4-20250514',
-        max_tokens:4000,
+        max_tokens:8000,
         messages:[{role:'user',content:[
           {type:'image',source:{type:'base64',media_type:file.type||'image/jpeg',data:base64}},
-          {type:'text',text:`You are reading a word search puzzle image. Your job is to extract the letter grid with PERFECT accuracy.
+          {type:'text',text:`You are reading a word search puzzle image. Always attempt to read the grid — never refuse or return an error.
 
-CRITICAL INSTRUCTIONS:
-1. Count the exact number of columns in the FIRST row
-2. Every subsequent row MUST have the same number of columns
-3. Read left to right, top to bottom — do not skip any rows
-4. Include EVERY row you can see in the image, even partial rows at edges
-5. Double-check each letter carefully — common OCR mistakes: O/0, I/1/L, B/8, S/5
-6. Also extract the word list printed near the puzzle
+INSTRUCTIONS:
+1. Find the rectangular grid of single letters
+2. Read every row left to right, top to bottom
+3. Every row must have the same number of letters
+4. Common confusables: O not 0, I not 1, L not 1, S not 5, B not 8 — always use letters
+5. Also read the word list printed near or below the grid
+6. If image is unclear, do your best — report confidence as low but still return data
 
-Return ONLY this JSON format, nothing else:
+ALWAYS return this exact JSON with no other text:
 {
   "grid": "ROW1LETTERS\\nROW2LETTERS\\nROW3LETTERS",
   "words": ["WORD1","WORD2","WORD3"],
   "rows_found": 15,
   "cols_found": 15,
   "confidence": "high/medium/low",
-  "notes": "any issues you noticed"
+  "notes": "any issues noticed"
 }`}
         ]}]
       })
@@ -519,6 +519,7 @@ Return ONLY this JSON format, nothing else:
       },1500);
     } else {
       statusText.innerHTML='<strong>Could not read your image.</strong><br>Try these fixes:<br>• Use a screenshot instead of a photo (works much better)<br>• Make sure the puzzle is flat with no shadows<br>• Shoot straight down — no angle<br>• Make sure all rows are visible<br>Or scroll down to enter the grid manually.';
+      status.style.cssText='display:flex !important;';
     }
   }catch(e){
     statusText.innerHTML='<strong>Could not read your image.</strong><br>Try these fixes:<br>• Use a screenshot instead of a photo (works much better)<br>• Make sure the puzzle is flat with no shadows<br>• Shoot straight down — no angle<br>• Make sure all rows are visible<br>Or scroll down to enter the grid manually.';
