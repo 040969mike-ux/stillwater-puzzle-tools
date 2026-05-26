@@ -349,7 +349,7 @@ function descrambleCorrect(letters, lenFilter) {
   return DICT.filter(w => {
     // Length check
     if (lenFilter === 0) {
-      if (w.length !== L.length) return false;
+      if (w.length < 2 || w.length > L.length) return false;
     } else if (lenFilter === 8) {
       if (w.length < 8 || w.length > L.length) return false;
     } else {
