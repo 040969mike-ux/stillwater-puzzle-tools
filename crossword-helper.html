@@ -491,7 +491,20 @@ document.getElementById('solveOneBtn').addEventListener('click',async()=>{
       });
       const data=await response.json();
       const text=data.content?.find(b=>b.type==='text')?.text||'';
-      const parsed=JSON.parse(text.replace(/```json|```/g,'').trim());
+      let parsed;
+try{
+  parsed=JSON.parse(text.replace(/```json|```/g,'').trim());
+}catch(jsonErr){
+  // AI returned non-JSON — extract answer from raw text
+  const answerMatch=text.match(/\b([A-Z]{3,25})\b/);
+  const answer=answerMatch?answerMatch[1]:'';
+  sr.innerHTML=answer
+    ?`<div class="sr-clue">"${clueText}"</div><div class="sr-answer">${answer}</div><div class="sr-explain">Answer extracted from AI response.</div>`
+    :`<span style="font-style:italic;color:var(--muted);">AI returned an unexpected response — try rephrasing the clue or adding more known letters.</span>`;
+  document.getElementById('clearBtn').classList.add('show');
+  if(activeClueData)activeClueData._answer=answer;
+  return;
+}
       const answer=(parsed.answer||'').toUpperCase().replace(/[^A-Z]/g,'');
       const valid=!pattern||matchPattern(answer.toLowerCase(),pattern.toLowerCase());
       if(!valid){
