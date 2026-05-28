@@ -486,7 +486,7 @@ document.getElementById('solveOneBtn').addEventListener('click',async()=>{
         body:JSON.stringify({
           model:'claude-sonnet-4-20250514',
           max_tokens:300,
-          messages:[{role:'user',content:`Solve this crossword clue.${patternHint}\nClue: "${clueText}"\n\nIMPORTANT: Your answer MUST match the pattern exactly — correct length and any known letters in correct positions.\n\nReply ONLY in JSON: {"answer":"WORD","explanation":"1-2 sentence explanation."}`}]
+          messages:[{role:'user',content:`You are a crossword puzzle solver. Reply with ONLY a JSON object and nothing else. No explanation outside the JSON. No markdown. Just the raw JSON.\n\nSolve this clue:${patternHint}\nClue: "${clueText}"\n\nRequired format (raw JSON only): {"answer":"WORD","explanation":"1-2 sentences"}`
         })
       });
       const data=await response.json();
