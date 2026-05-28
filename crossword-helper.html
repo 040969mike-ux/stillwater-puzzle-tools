@@ -67,9 +67,21 @@
     .manual-section{display:flex;flex-direction:column;gap:0.75rem;}
     .input-label{font-size:0.78rem;font-weight:500;color:var(--navy);display:block;margin-bottom:0.3rem;}
 
-    /* CLUE BOX — populated from list click */
-    .clue-source-box{background:var(--cream-2);border:1.5px solid var(--cream-3);border-radius:var(--r);padding:0.65rem 0.9rem;font-size:0.82rem;color:var(--navy);min-height:2.2rem;font-style:italic;color:var(--muted);}
+    .clue-source-box{background:var(--cream-2);border:1.5px solid var(--cream-3);border-radius:var(--r);padding:0.65rem 0.9rem;font-size:0.82rem;min-height:2.2rem;font-style:italic;color:var(--muted);outline:none;transition:border-color 0.2s;}
+    .clue-source-box:focus{border-color:var(--gold);background:var(--white);}
     .clue-source-box.populated{font-style:normal;color:var(--navy);border-color:var(--gold);}
+
+    /* SQUARE COUNTER */
+    .square-counter{display:none;align-items:center;gap:0.75rem;background:#fff8e8;border:1.5px solid var(--gold);border-radius:var(--r);padding:0.65rem 1rem;margin-top:0.5rem;}
+    .square-counter.show{display:flex;}
+    .square-counter-label{font-size:0.78rem;font-weight:600;color:var(--navy);flex:1;line-height:1.4;}
+    .square-counter-label span{display:block;font-size:0.7rem;font-weight:400;color:var(--muted);margin-top:0.15rem;}
+    .spinner-row{display:flex;align-items:center;gap:0;border:1.5px solid var(--gold);border-radius:var(--r);overflow:hidden;flex-shrink:0;}
+    .spinner-btn{background:var(--navy);color:var(--gold-2);border:none;width:2.2rem;height:2.2rem;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.15s;flex-shrink:0;}
+    .spinner-btn:hover{background:var(--slate);}
+    .spinner-val{font-family:'DM Mono',monospace;font-size:1rem;font-weight:600;color:var(--navy);background:var(--white);width:2.5rem;height:2.2rem;display:flex;align-items:center;justify-content:center;border-left:1px solid var(--cream-3);border-right:1px solid var(--cream-3);}
+    .spinner-apply{font-size:0.72rem;font-weight:600;background:var(--gold);color:var(--navy);border:none;border-radius:var(--r);padding:0.4rem 0.75rem;cursor:pointer;white-space:nowrap;transition:opacity 0.15s;margin-left:0.5rem;}
+    .spinner-apply:hover{opacity:0.85;}
 
     .pattern-row{display:flex;gap:0.5rem;}
     .pattern-input{flex:1;font-family:'DM Mono',monospace;font-size:1.1rem;letter-spacing:0.18em;padding:0.6rem 0.85rem;border:1.5px solid var(--cream-3);border-radius:var(--r);background:var(--cream);color:var(--navy);text-transform:uppercase;outline:none;transition:border-color 0.2s,box-shadow 0.2s;}
@@ -82,18 +94,15 @@
     .pattern-tip.show{display:block;}
     .pattern-tip strong{color:var(--navy);}
 
-    .solve-btn-row{display:flex;gap:0.5rem;margin-top:0.5rem;align-items:center;}
     .btn{font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:500;border:none;border-radius:var(--r);padding:0.55rem 1.1rem;cursor:pointer;transition:opacity 0.15s,transform 0.12s;}
     .btn:hover:not(:disabled){opacity:0.88;transform:translateY(-1px);}
     .btn:disabled{opacity:0.4;cursor:not-allowed;transform:none;}
     .btn-primary{background:var(--navy);color:var(--gold-2);}
-    .btn-gold{background:var(--gold);color:var(--navy);}
     .btn-ghost{background:none;border:1.5px solid var(--cream-3);color:var(--muted);font-size:0.78rem;}
     .btn-ghost:hover:not(:disabled){border-color:var(--slate-2);color:var(--navy);}
-    .btn-clear{background:none;border:1.5px solid var(--cream-3);color:var(--muted);font-size:0.75rem;display:none;}
+    .btn-clear{background:none;border:1.5px solid var(--cream-3);color:var(--muted);font-size:0.75rem;display:none;margin-top:0.5rem;}
     .btn-clear.show{display:inline-block;}
 
-    /* TIP BOX — shown when all dots no clue */
     .tip-box{display:none;background:#fff8e8;border:1.5px solid var(--gold);border-radius:var(--r);padding:0.85rem 1rem;margin-top:0.75rem;}
     .tip-box.show{display:block;}
     .tip-box-head{font-size:0.78rem;font-weight:600;color:var(--navy);margin-bottom:0.4rem;display:flex;align-items:center;gap:0.4rem;}
@@ -180,7 +189,7 @@
 
 <div class="hero">
   <h1>Crossword <span>Helper</span></h1>
-  <p>Upload a photo of your crossword — work it yourself, and click any clue <em>only when you're stuck</em>. The clue fills in automatically. Add your pattern, hit Solve It.</p>
+  <p>Upload a photo of your crossword — work it yourself, and click any clue <em>only when you're stuck</em>. The clue fills in automatically. Count the squares, set the number, hit Solve It.</p>
 </div>
 
 <div class="page">
@@ -193,37 +202,51 @@
           <input type="file" id="imageInput" accept="image/*" capture="environment" />
           <div class="upload-icon">📷</div>
           <div class="upload-title">Snap or upload a photo of your crossword</div>
-          <div class="upload-sub">AI reads all the clues and counts the squares — then waits for you.<br>Work the puzzle yourself. Click a clue only when stuck.</div>
+          <div class="upload-sub">AI reads all the clues — then waits for you.<br>Work the puzzle yourself. Click a clue only when stuck.</div>
         </div>
 
         <div class="ai-status" id="aiStatus">
           <div class="ai-spinner"></div>
-          <span id="aiStatusText">Reading your crossword clues and counting squares — this takes about 15 seconds…</span>
+          <span id="aiStatusText">Reading your crossword clues — this takes about 15 seconds…</span>
         </div>
 
         <div class="or-divider"><span>or solve one clue manually</span></div>
 
         <div class="manual-section">
+
+          <!-- CLUE BOX -->
           <div>
-            <label class="input-label">Clue — click a clue below or type one here</label>
-            <div id="clueSourceBox" class="clue-source-box" onclick="document.getElementById('clueInputHidden').focus()">Click a clue from the list below, or type your clue here…</div>
-            <input id="clueInputHidden" type="text" style="position:absolute;opacity:0;pointer-events:none;" />
+            <label class="input-label">Clue — click a clue from the list below, or type one here</label>
+            <div id="clueSourceBox" class="clue-source-box" contenteditable="true">Click a clue from the list below, or type your clue here…</div>
           </div>
 
+          <!-- SQUARE COUNTER -->
+          <div class="square-counter" id="squareCounter">
+            <div class="square-counter-label">
+              How many squares does this word fill?
+              <span>Count the empty boxes for this answer in your grid, then tap + or − to match.</span>
+            </div>
+            <div class="spinner-row">
+              <button class="spinner-btn" id="spinnerMinus">−</button>
+              <div class="spinner-val" id="spinnerVal">0</div>
+              <button class="spinner-btn" id="spinnerPlus">+</button>
+            </div>
+            <button class="spinner-apply" id="spinnerApply">Set Pattern →</button>
+          </div>
+
+          <!-- PATTERN -->
           <div>
-            <label class="input-label" for="patternInput">Pattern — dots and letters must equal the total number of squares for that word</label>
+            <label class="input-label" for="patternInput">Pattern — replace dots with any letters you already know</label>
             <div class="pattern-row">
-              <input id="patternInput" class="pattern-input" type="text" placeholder="e.g. if the word is 8 letters: ........" maxlength="25" autocomplete="off" spellcheck="false" />
+              <input id="patternInput" class="pattern-input" type="text" placeholder="Tap + / − above to set squares, then fill in known letters" maxlength="25" autocomplete="off" spellcheck="false" />
               <button class="btn btn-primary" id="solveOneBtn" disabled>Solve It</button>
             </div>
-            <div class="pattern-tip" id="patternTip">
-              <strong>⚠ Tip:</strong> Your dots and letters must equal the total number of squares for this word. Example: an 8-letter word with D as the first letter = <strong>D.......</strong> — dots already pre-filled from the grid count above if you used photo upload.
+            <div class="pattern-tip show" id="patternTip">
+              Replace any dot with a letter you already know. Example: 3rd letter is R → <strong>..R........</strong>
             </div>
           </div>
 
-          <div class="solve-btn-row">
-            <button class="btn btn-clear" id="clearBtn">✕ Clear &amp; Next</button>
-          </div>
+          <button class="btn btn-clear" id="clearBtn">✕ Clear &amp; Next Clue</button>
         </div>
 
         <!-- ALL DOTS NO CLUE TIP BOX -->
@@ -231,9 +254,9 @@
           <div class="tip-box-head">💡 Need a better answer? Try this:</div>
           <ul>
             <li>Solve a crossing word first to get at least one letter, then replace that dot with the letter you found</li>
-            <li>Example: 8-letter word, you solved a cross and know the 3rd letter is R → type <strong>..R.....</strong></li>
-            <li>The more letters you fill in, the more accurate the answer will be</li>
-            <li>You can also type the clue text in the clue box above to help narrow it down</li>
+            <li>Example: you solved a cross and know the 3rd letter is R → change <strong>........</strong> to <strong>..R.....</strong></li>
+            <li>The more letters you fill in, the more accurate the answer</li>
+            <li>Make sure the clue text is filled in above — it helps narrow down the answer significantly</li>
           </ul>
         </div>
 
@@ -241,9 +264,9 @@
 
         <div class="divider"></div>
 
+        <!-- CLUE LIST WORKSPACE -->
         <div class="workspace" id="workspace">
           <div class="workspace-label">Your Clues — click one only when you're stuck</div>
-
           <div class="clue-result" id="clueResult">
             <div class="cr-label">Answer</div>
             <div class="cr-answer" id="crAnswer"></div>
@@ -253,7 +276,6 @@
               <button class="btn btn-ghost" id="dismissBtn" style="font-size:0.72rem;">Dismiss</button>
             </div>
           </div>
-
           <div class="clue-columns">
             <div>
               <div class="clue-col-head">Across</div>
@@ -275,13 +297,15 @@
       <div class="side-head"><h3>How it works</h3></div>
       <div class="side-body">
         <ol class="how-list">
-          <li>Upload a photo — AI reads all clues and counts squares</li>
-          <li>Work the puzzle yourself — nothing is solved yet</li>
-          <li>Stuck on a clue? Click it in the list below</li>
-          <li>The clue fills in automatically with the dot count pre-filled</li>
+          <li>Upload a photo — AI reads all clues</li>
+          <li>Work the puzzle yourself first</li>
+          <li>Stuck? Click the clue in the list below</li>
+          <li>Count the squares for that word in your grid</li>
+          <li>Tap + or − to set the square count</li>
+          <li>Hit "Set Pattern" — dots fill in automatically</li>
           <li>Replace dots with any letters you already know</li>
           <li>Hit Solve It — AI solves only that clue</li>
-          <li>Mark it solved, hit Clear &amp; Next, keep going</li>
+          <li>Mark solved, hit Clear &amp; Next, keep going</li>
         </ol>
       </div>
     </div>
@@ -323,6 +347,7 @@
 let activeClueItem=null;
 let activeClueData=null;
 let currentClueText='';
+let squareCount=0;
 
 // ── PATTERN MATCH ──────────────────────────────────────────────────
 function matchPattern(word,pattern){
@@ -332,23 +357,44 @@ function matchPattern(word,pattern){
   return true;
 }
 
-// ── CLUE SOURCE BOX (editable div behavior) ────────────────────────
+// ── CLUE SOURCE BOX ────────────────────────────────────────────────
 const clueBox=document.getElementById('clueSourceBox');
-clueBox.setAttribute('contenteditable','true');
+const PLACEHOLDER='Click a clue from the list below, or type your clue here…';
+
 clueBox.addEventListener('focus',()=>{
-  if(clueBox.textContent==='Click a clue from the list below, or type your clue here…'){
+  if(clueBox.textContent===PLACEHOLDER){
     clueBox.textContent='';
     clueBox.classList.add('populated');
   }
 });
 clueBox.addEventListener('blur',()=>{
   if(!clueBox.textContent.trim()){
-    clueBox.textContent='Click a clue from the list below, or type your clue here…';
+    clueBox.textContent=PLACEHOLDER;
     clueBox.classList.remove('populated');
   }
 });
 clueBox.addEventListener('input',()=>{
-  currentClueText=clueBox.textContent.trim();
+  currentClueText=clueBox.textContent.trim()===PLACEHOLDER?'':clueBox.textContent.trim();
+});
+
+// ── SQUARE SPINNER ─────────────────────────────────────────────────
+const spinnerVal=document.getElementById('spinnerVal');
+
+function updateSpinner(val){
+  squareCount=Math.max(1,Math.min(25,val));
+  spinnerVal.textContent=squareCount;
+}
+
+document.getElementById('spinnerMinus').addEventListener('click',()=>updateSpinner(squareCount-1));
+document.getElementById('spinnerPlus').addEventListener('click',()=>updateSpinner(squareCount+1));
+
+document.getElementById('spinnerApply').addEventListener('click',()=>{
+  if(squareCount<1)return;
+  const dots='.'.repeat(squareCount);
+  document.getElementById('patternInput').value=dots;
+  document.getElementById('patternInput').classList.add('pulse');
+  setTimeout(()=>document.getElementById('patternInput').classList.remove('pulse'),5000);
+  document.getElementById('patternInput').focus();
   checkSolveReady();
 });
 
@@ -365,63 +411,58 @@ patternInput.addEventListener('input',function(){
 function checkSolveReady(){
   const hasPattern=patternInput.value.trim().length>0;
   document.getElementById('solveOneBtn').disabled=!hasPattern;
-  if(hasPattern){
-    document.getElementById('patternTip').classList.add('show');
-  } else {
-    document.getElementById('patternTip').classList.remove('show');
-  }
 }
 
 // ── POPULATE FROM CLUE CLICK ───────────────────────────────────────
 function populateFromClue(clue){
-  // Set clue text
   currentClueText=clue.text;
   clueBox.textContent=clue.text;
   clueBox.classList.add('populated');
 
-  // Pre-fill pattern with dots equal to answer length
-  const dots=clue.length?'.'.repeat(clue.length):'';
-  patternInput.value=dots;
-  patternInput.classList.add('pulse');
-  setTimeout(()=>patternInput.classList.remove('pulse'),5000);
-  patternInput.focus();
+  // Reset pattern
+  patternInput.value='';
+  document.getElementById('solveOneBtn').disabled=true;
+  document.getElementById('singleResult').className='single-result';
+  document.getElementById('tipBox').classList.remove('show');
 
-  checkSolveReady();
+  // Show square counter and reset to 0
+  squareCount=0;
+  spinnerVal.textContent='0';
+  document.getElementById('squareCounter').classList.add('show');
 
-  // Show tip
-  document.getElementById('patternTip').classList.add('show');
-
-  // Scroll up to solver
+  // Scroll to solver
   document.querySelector('.manual-section').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
 // ── CLEAR & NEXT ───────────────────────────────────────────────────
 document.getElementById('clearBtn').addEventListener('click',()=>{
-  clueBox.textContent='Click a clue from the list below, or type your clue here…';
+  clueBox.textContent=PLACEHOLDER;
   clueBox.classList.remove('populated');
   patternInput.value='';
   currentClueText='';
+  squareCount=0;
+  spinnerVal.textContent='0';
+  document.getElementById('squareCounter').classList.remove('show');
   document.getElementById('singleResult').className='single-result';
   document.getElementById('solveOneBtn').disabled=true;
-  document.getElementById('patternTip').classList.remove('show');
   document.getElementById('tipBox').classList.remove('show');
   document.getElementById('clearBtn').classList.remove('show');
+  document.getElementById('clueResult').className='clue-result';
   if(activeClueItem)activeClueItem.classList.remove('active');
   activeClueItem=null;
+  activeClueData=null;
 });
 
 // ── SOLVE ONE CLUE ─────────────────────────────────────────────────
 document.getElementById('solveOneBtn').addEventListener('click',async()=>{
   const rawPattern=patternInput.value.trim();
-  const clue=currentClueText||clueBox.textContent.trim();
-  const isPlaceholder=clue==='Click a clue from the list below, or type your clue here…';
-  const clueText=isPlaceholder?'':clue;
+  const isPlaceholder=clueBox.textContent.trim()===PLACEHOLDER;
+  const clueText=isPlaceholder?'':clueBox.textContent.trim();
 
   const pattern=rawPattern.replace(/[^a-zA-Z.]/g,'');
   const letterCount=pattern.length;
   const allDots=pattern.length>0&&[...pattern].every(c=>c==='.');
 
-  // Show tip box if all dots and no clue
   if(allDots&&!clueText){
     document.getElementById('tipBox').classList.add('show');
     return;
@@ -429,8 +470,9 @@ document.getElementById('solveOneBtn').addEventListener('click',async()=>{
 
   const sr=document.getElementById('singleResult');
   sr.className='single-result show';
-  sr.innerHTML='<span class="cr-solving">Solving…</span>';
+  sr.innerHTML='<span style="font-style:italic;color:var(--muted);">Solving…</span>';
   document.getElementById('clearBtn').classList.add('show');
+  document.getElementById('tipBox').classList.remove('show');
 
   const patternHint=pattern
     ?` The answer MUST be exactly ${letterCount} letters long. Pattern: ${pattern.toUpperCase()} — dots are unknown letters, any letter shown must appear in that exact position. This is a hard constraint.`
@@ -444,7 +486,7 @@ document.getElementById('solveOneBtn').addEventListener('click',async()=>{
         body:JSON.stringify({
           model:'claude-sonnet-4-20250514',
           max_tokens:300,
-          messages:[{role:'user',content:`Solve this crossword clue.${patternHint}\nClue: "${clueText}"\n\nIMPORTANT: Your answer MUST match the pattern exactly — correct length and any known letters in correct positions. Do not return an answer that does not fit the pattern.\n\nReply ONLY in JSON: {"answer":"WORD","explanation":"1-2 sentence explanation."}`}]
+          messages:[{role:'user',content:`Solve this crossword clue.${patternHint}\nClue: "${clueText}"\n\nIMPORTANT: Your answer MUST match the pattern exactly — correct length and any known letters in correct positions.\n\nReply ONLY in JSON: {"answer":"WORD","explanation":"1-2 sentence explanation."}`}]
         })
       });
       const data=await response.json();
@@ -457,13 +499,11 @@ document.getElementById('solveOneBtn').addEventListener('click',async()=>{
       } else {
         sr.innerHTML=`<div class="sr-clue">"${clueText}"</div><div class="sr-answer">${answer}</div><div class="sr-explain">${parsed.explanation||''}</div>`;
       }
-      // Update active clue data
       if(activeClueData)activeClueData._answer=answer;
     }catch(e){
       sr.innerHTML='<span style="font-style:italic;color:var(--muted);">Could not solve — check your pattern and try again.</span>';
     }
   } else {
-    // Pattern only
     try{
       const response=await fetch('https://joyful-cannoli-006a05.netlify.app/.netlify/functions/claude-proxy',{
         method:'POST',
@@ -471,7 +511,7 @@ document.getElementById('solveOneBtn').addEventListener('click',async()=>{
         body:JSON.stringify({
           model:'claude-sonnet-4-20250514',
           max_tokens:400,
-          messages:[{role:'user',content:`Give me a list of common English words that match this crossword pattern: ${pattern.toUpperCase()}\n\nRules:\n- The answer must be exactly ${letterCount} letters long\n- Dots represent unknown letters\n- Any letter shown must appear in that exact position\n- Return only real common English words\n\nReply ONLY in JSON: {"matches":["WORD1","WORD2","WORD3"]}`}]
+          messages:[{role:'user',content:`Give me a list of common English words that match this crossword pattern: ${pattern.toUpperCase()}\n\nRules:\n- Exactly ${letterCount} letters long\n- Dots are unknown letters\n- Any letter shown must appear in that exact position\n- Real common English words only\n\nReply ONLY in JSON: {"matches":["WORD1","WORD2","WORD3"]}`}]
         })
       });
       const data=await response.json();
@@ -489,17 +529,15 @@ document.getElementById('solveOneBtn').addEventListener('click',async()=>{
   }
 });
 
-// ── SOLVE CLUE FROM WORKSPACE (photo upload mode) ──────────────────
+// ── SOLVE CLUE FROM WORKSPACE ──────────────────────────────────────
 async function solveClue(clueText,pattern,resultEl){
   resultEl.className='clue-result show';
   document.getElementById('crAnswer').textContent='';
   document.getElementById('crExplain').innerHTML='<span class="cr-solving">Thinking…</span>';
-
   const letterCount=pattern?pattern.replace(/[^a-z.]/gi,'').length:0;
   const patternHint=pattern
     ?` The answer MUST be exactly ${letterCount} letters long. Pattern: ${pattern.toUpperCase()} — dots are unknown letters, any letter shown must appear in that exact position. This is a hard constraint.`
     :'';
-
   try{
     const response=await fetch('https://joyful-cannoli-006a05.netlify.app/.netlify/functions/claude-proxy',{
       method:'POST',
@@ -507,7 +545,7 @@ async function solveClue(clueText,pattern,resultEl){
       body:JSON.stringify({
         model:'claude-sonnet-4-20250514',
         max_tokens:300,
-        messages:[{role:'user',content:`Solve this crossword clue and explain briefly why.${patternHint}\n\nClue: "${clueText}"\n\nIMPORTANT: Your answer MUST match the pattern exactly.\n\nReply in this exact JSON format only:\n{"answer":"WORD","explanation":"Brief explanation of why this answer fits the clue in 1-2 sentences."}`}]
+        messages:[{role:'user',content:`Solve this crossword clue and explain briefly why.${patternHint}\n\nClue: "${clueText}"\n\nIMPORTANT: Your answer MUST match the pattern exactly.\n\nReply in this exact JSON format only:\n{"answer":"WORD","explanation":"Brief explanation in 1-2 sentences."}`}]
       })
     });
     const data=await response.json();
@@ -533,17 +571,12 @@ function buildClueWorkspace(acrossClues,downClues){
   function addClueItem(clue,list){
     const li=document.createElement('li');
     li.className='clue-item';
-    const lengthHint=clue.length?` (${clue.length})` :'';
-    li.innerHTML=`<span class="clue-num">${clue.num}</span><span class="clue-text">${clue.text}<span style="font-size:0.7rem;color:var(--gold);margin-left:0.3rem;">${lengthHint}</span></span>`;
-    li.addEventListener('click',async()=>{
-      if(activeClueItem&&activeClueItem!==li){
-        activeClueItem.classList.remove('active');
-      }
+    li.innerHTML=`<span class="clue-num">${clue.num}</span><span class="clue-text">${clue.text}</span>`;
+    li.addEventListener('click',()=>{
+      if(activeClueItem&&activeClueItem!==li)activeClueItem.classList.remove('active');
       activeClueItem=li;
       li.classList.add('active');
       activeClueData=clue;
-
-      // Populate the manual solver at the top
       populateFromClue(clue);
     });
     list.appendChild(li);
@@ -581,7 +614,7 @@ document.getElementById('imageInput').addEventListener('change',async function()
   const status=document.getElementById('aiStatus');
   const statusText=document.getElementById('aiStatusText');
   status.classList.add('show');
-  statusText.textContent='Reading your crossword clues and counting squares — this takes about 15 seconds…';
+  statusText.textContent='Reading your crossword clues — this takes about 15 seconds…';
 
   const base64=await new Promise((res,rej)=>{
     const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=rej;r.readAsDataURL(file);
@@ -596,26 +629,21 @@ document.getElementById('imageInput').addEventListener('change',async function()
         max_tokens:3000,
         messages:[{role:'user',content:[
           {type:'image',source:{type:'base64',media_type:file.type||'image/jpeg',data:base64}},
-          {type:'text',text:`This is a crossword puzzle image. Extract all visible clues AND count the number of squares for each answer in the grid.
+          {type:'text',text:`This is a crossword puzzle image. Extract all visible clues.
 
 Return ONLY this JSON, no other text:
 {
   "across": [
-    {"num":"1","text":"Clue text here","pattern":"","length":7},
-    {"num":"5","text":"Another clue","pattern":"","length":4}
+    {"num":"1","text":"Clue text here","pattern":""},
+    {"num":"5","text":"Another clue","pattern":""}
   ],
   "down": [
-    {"num":"2","text":"Clue text here","pattern":"","length":5},
-    {"num":"3","text":"Another clue","pattern":"","length":8}
+    {"num":"2","text":"Clue text here","pattern":""},
+    {"num":"3","text":"Another clue","pattern":""}
   ]
 }
 
-For each clue:
-- "text": the exact clue text
-- "length": count the number of squares in the grid for that answer (count carefully)
-- "pattern": if you can see any filled letters in the grid, include them using dots for unknowns (e.g. "P..ZLE"). Leave as empty string if no letters visible.
-
-Extract every clue you can read. Count every square carefully.`}
+For each clue: extract the exact clue text. If you can see filled letters in the grid, include them in "pattern" using dots for unknowns. Leave pattern as empty string if no letters visible.`}
         ]}]
       })
     });
@@ -623,13 +651,12 @@ Extract every clue you can read. Count every square carefully.`}
     const data=await response.json();
     const text=data.content?.find(b=>b.type==='text')?.text||'';
     const parsed=JSON.parse(text.replace(/```json|```/g,'').trim());
-
     const across=parsed.across||[];
     const down=parsed.down||[];
     const total=across.length+down.length;
 
     if(total>0){
-      statusText.textContent=`Found ${across.length} across and ${down.length} down clues with square counts. Click any clue when you're stuck.`;
+      statusText.textContent=`Found ${across.length} across and ${down.length} down clues. Click any clue when you're stuck.`;
       setTimeout(()=>{
         status.classList.remove('show');
         buildClueWorkspace(across,down);
@@ -644,7 +671,7 @@ Extract every clue you can read. Count every square carefully.`}
   }
 });
 
-// Drag and drop
+// ── DRAG AND DROP ──────────────────────────────────────────────────
 const zone=document.getElementById('uploadZone');
 zone.addEventListener('dragover',e=>{e.preventDefault();zone.classList.add('drag-over');});
 zone.addEventListener('dragleave',()=>zone.classList.remove('drag-over'));
