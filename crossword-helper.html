@@ -71,7 +71,6 @@
     .clue-source-box:focus{border-color:var(--gold);background:var(--white);}
     .clue-source-box.populated{font-style:normal;color:var(--navy);border-color:var(--gold);}
 
-    /* SQUARE COUNTER */
     .square-counter{display:none;align-items:center;gap:0.75rem;background:#fff8e8;border:1.5px solid var(--gold);border-radius:var(--r);padding:0.65rem 1rem;margin-top:0.5rem;}
     .square-counter.show{display:flex;}
     .square-counter-label{font-size:0.78rem;font-weight:600;color:var(--navy);flex:1;line-height:1.4;}
@@ -213,14 +212,11 @@
         <div class="or-divider"><span>or solve one clue manually</span></div>
 
         <div class="manual-section">
-
-          <!-- CLUE BOX -->
           <div>
             <label class="input-label">Clue — click a clue from the list below, or type one here</label>
             <div id="clueSourceBox" class="clue-source-box" contenteditable="true">Click a clue from the list below, or type your clue here…</div>
           </div>
 
-          <!-- SQUARE COUNTER -->
           <div class="square-counter" id="squareCounter">
             <div class="square-counter-label">
               How many squares does this word fill?
@@ -234,7 +230,6 @@
             <button class="spinner-apply" id="spinnerApply">Set Pattern →</button>
           </div>
 
-          <!-- PATTERN -->
           <div>
             <label class="input-label" for="patternInput">Pattern — replace dots with any letters you already know</label>
             <div class="pattern-row">
@@ -249,7 +244,6 @@
           <button class="btn btn-clear" id="clearBtn">✕ Clear &amp; Next Clue</button>
         </div>
 
-        <!-- ALL DOTS NO CLUE TIP BOX -->
         <div class="tip-box" id="tipBox">
           <div class="tip-box-head">💡 Need a better answer? Try this:</div>
           <ul>
@@ -264,7 +258,6 @@
 
         <div class="divider"></div>
 
-        <!-- CLUE LIST WORKSPACE -->
         <div class="workspace" id="workspace">
           <div class="workspace-label">Your Clues — click one only when you're stuck</div>
           <div class="clue-result" id="clueResult">
@@ -349,7 +342,7 @@ let activeClueData=null;
 let currentClueText='';
 let squareCount=0;
 
-// ── PATTERN MATCH ──────────────────────────────────────────────────
+// ── HELPERS ────────────────────────────────────────────────────────
 function matchPattern(word,pattern){
   const p=pattern.toLowerCase().replace(/[^a-z.]/g,'');
   if(word.length!==p.length)return false;
@@ -357,21 +350,20 @@ function matchPattern(word,pattern){
   return true;
 }
 
+function safeParseJSON(text){
+  try{return JSON.parse(text.replace(/```json|```/g,'').trim());}
+  catch(e){return null;}
+}
+
 // ── CLUE SOURCE BOX ────────────────────────────────────────────────
 const clueBox=document.getElementById('clueSourceBox');
 const PLACEHOLDER='Click a clue from the list below, or type your clue here…';
 
 clueBox.addEventListener('focus',()=>{
-  if(clueBox.textContent===PLACEHOLDER){
-    clueBox.textContent='';
-    clueBox.classList.add('populated');
-  }
+  if(clueBox.textContent===PLACEHOLDER){clueBox.textContent='';clueBox.classList.add('populated');}
 });
 clueBox.addEventListener('blur',()=>{
-  if(!clueBox.textContent.trim()){
-    clueBox.textContent=PLACEHOLDER;
-    clueBox.classList.remove('populated');
-  }
+  if(!clueBox.textContent.trim()){clueBox.textContent=PLACEHOLDER;clueBox.classList.remove('populated');}
 });
 clueBox.addEventListener('input',()=>{
   currentClueText=clueBox.textContent.trim()===PLACEHOLDER?'':clueBox.textContent.trim();
@@ -409,8 +401,7 @@ patternInput.addEventListener('input',function(){
 });
 
 function checkSolveReady(){
-  const hasPattern=patternInput.value.trim().length>0;
-  document.getElementById('solveOneBtn').disabled=!hasPattern;
+  document.getElementById('solveOneBtn').disabled=patternInput.value.trim().length===0;
 }
 
 // ── POPULATE FROM CLUE CLICK ───────────────────────────────────────
@@ -418,19 +409,13 @@ function populateFromClue(clue){
   currentClueText=clue.text;
   clueBox.textContent=clue.text;
   clueBox.classList.add('populated');
-
-  // Reset pattern
   patternInput.value='';
   document.getElementById('solveOneBtn').disabled=true;
   document.getElementById('singleResult').className='single-result';
   document.getElementById('tipBox').classList.remove('show');
-
-  // Show square counter and reset to 0
   squareCount=0;
   spinnerVal.textContent='0';
   document.getElementById('squareCounter').classList.add('show');
-
-  // Scroll to solver
   document.querySelector('.manual-section').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
@@ -458,15 +443,11 @@ document.getElementById('solveOneBtn').addEventListener('click',async()=>{
   const rawPattern=patternInput.value.trim();
   const isPlaceholder=clueBox.textContent.trim()===PLACEHOLDER;
   const clueText=isPlaceholder?'':clueBox.textContent.trim();
-
   const pattern=rawPattern.replace(/[^a-zA-Z.]/g,'');
   const letterCount=pattern.length;
   const allDots=pattern.length>0&&[...pattern].every(c=>c==='.');
 
-  if(allDots&&!clueText){
-    document.getElementById('tipBox').classList.add('show');
-    return;
-  }
+  if(allDots&&!clueText){document.getElementById('tipBox').classList.add('show');return;}
 
   const sr=document.getElementById('singleResult');
   sr.className='single-result show';
@@ -486,25 +467,21 @@ document.getElementById('solveOneBtn').addEventListener('click',async()=>{
         body:JSON.stringify({
           model:'claude-sonnet-4-20250514',
           max_tokens:300,
-          messages:[{role:'user',content:`You are a crossword puzzle solver. Reply with ONLY a JSON object and nothing else. No explanation outside the JSON. No markdown. Just the raw JSON.\n\nSolve this clue:${patternHint}\nClue: "${clueText}"\n\nRequired format (raw JSON only): {"answer":"WORD","explanation":"1-2 sentences"}`
+          messages:[{role:'user',content:`You are a crossword puzzle solver. Reply with ONLY a JSON object and nothing else. No explanation outside the JSON. No markdown. Just the raw JSON.\n\nSolve this clue:${patternHint}\nClue: "${clueText}"\n\nRequired format (raw JSON only): {"answer":"WORD","explanation":"1-2 sentences"}`}]
         })
       });
       const data=await response.json();
       const text=data.content?.find(b=>b.type==='text')?.text||'';
-      let parsed;
-try{
-  parsed=JSON.parse(text.replace(/```json|```/g,'').trim());
-}catch(jsonErr){
-  // AI returned non-JSON — extract answer from raw text
-  const answerMatch=text.match(/\b([A-Z]{3,25})\b/);
-  const answer=answerMatch?answerMatch[1]:'';
-  sr.innerHTML=answer
-    ?`<div class="sr-clue">"${clueText}"</div><div class="sr-answer">${answer}</div><div class="sr-explain">Answer extracted from AI response.</div>`
-    :`<span style="font-style:italic;color:var(--muted);">AI returned an unexpected response — try rephrasing the clue or adding more known letters.</span>`;
-  document.getElementById('clearBtn').classList.add('show');
-  if(activeClueData)activeClueData._answer=answer;
-  return;
-}
+      const parsed=safeParseJSON(text);
+      if(!parsed){
+        const answerMatch=text.match(/\b([A-Z]{3,25})\b/);
+        const answer=answerMatch?answerMatch[1]:'';
+        sr.innerHTML=answer
+          ?`<div class="sr-clue">"${clueText}"</div><div class="sr-answer">${answer}</div><div class="sr-explain">Answer extracted from AI response.</div>`
+          :`<span style="font-style:italic;color:var(--muted);">AI returned an unexpected response — try adding more known letters.</span>`;
+        if(activeClueData)activeClueData._answer=answer;
+        return;
+      }
       const answer=(parsed.answer||'').toUpperCase().replace(/[^A-Z]/g,'');
       const valid=!pattern||matchPattern(answer.toLowerCase(),pattern.toLowerCase());
       if(!valid){
@@ -529,8 +506,8 @@ try{
       });
       const data=await response.json();
       const text=data.content?.find(b=>b.type==='text')?.text||'';
-      const parsed=JSON.parse(text.replace(/```json|```/g,'').trim());
-      const matches=(parsed.matches||[]).map(w=>w.toUpperCase());
+      const parsed=safeParseJSON(text);
+      const matches=parsed?(parsed.matches||[]).map(w=>w.toUpperCase()):[];
       if(!matches.length){
         sr.innerHTML='<span style="font-style:italic;color:var(--muted);">No matches found — try filling in a letter or two from a crossing word.</span>';
       } else {
@@ -558,25 +535,19 @@ async function solveClue(clueText,pattern,resultEl){
       body:JSON.stringify({
         model:'claude-sonnet-4-20250514',
         max_tokens:300,
-        messages:[{role:'user',content:`Solve this crossword clue and explain briefly why.${patternHint}\n\nClue: "${clueText}"\n\nIMPORTANT: Your answer MUST match the pattern exactly.\n\nReply in this exact JSON format only:\n{"answer":"WORD","explanation":"Brief explanation in 1-2 sentences."}`}]
+        messages:[{role:'user',content:`You are a crossword puzzle solver. Reply with ONLY a JSON object and nothing else. No explanation outside the JSON. No markdown. Just the raw JSON.\n\nSolve this clue:${patternHint}\nClue: "${clueText}"\n\nRequired format (raw JSON only): {"answer":"WORD","explanation":"1-2 sentences"}`}]
       })
     });
     const data=await response.json();
     const text=data.content?.find(b=>b.type==='text')?.text||'';
-  let parsed;
-try{
-  parsed=JSON.parse(text.replace(/```json|```/g,'').trim());
-}catch(jsonErr){
-  // AI returned non-JSON — extract answer from raw text
-  const answerMatch=text.match(/\b([A-Z]{3,25})\b/);
-  const answer=answerMatch?answerMatch[1]:'';
-  sr.innerHTML=answer
-    ?`<div class="sr-clue">"${clueText}"</div><div class="sr-answer">${answer}</div><div class="sr-explain">Answer extracted from AI response.</div>`
-    :`<span style="font-style:italic;color:var(--muted);">AI returned an unexpected response — try rephrasing the clue or adding more known letters.</span>`;
-  document.getElementById('clearBtn').classList.add('show');
-  if(activeClueData)activeClueData._answer=answer;
-  return;
-}
+    const parsed=safeParseJSON(text);
+    if(!parsed){
+      const answerMatch=text.match(/\b([A-Z]{3,25})\b/);
+      const answer=answerMatch?answerMatch[1]:'';
+      document.getElementById('crAnswer').textContent=answer||'?';
+      document.getElementById('crExplain').textContent=answer?'Answer extracted from AI response.':'Could not solve — try adding known letters.';
+      return answer;
+    }
     document.getElementById('crAnswer').textContent=parsed.answer?.toUpperCase()||'?';
     document.getElementById('crExplain').textContent=parsed.explanation||'';
     return parsed.answer||'';
@@ -655,51 +626,28 @@ document.getElementById('imageInput').addEventListener('change',async function()
         max_tokens:3000,
         messages:[{role:'user',content:[
           {type:'image',source:{type:'base64',media_type:file.type||'image/jpeg',data:base64}},
-          {type:'text',text:`This is a crossword puzzle image. Extract all visible clues.
-
-Return ONLY this JSON, no other text:
-{
-  "across": [
-    {"num":"1","text":"Clue text here","pattern":""},
-    {"num":"5","text":"Another clue","pattern":""}
-  ],
-  "down": [
-    {"num":"2","text":"Clue text here","pattern":""},
-    {"num":"3","text":"Another clue","pattern":""}
-  ]
-}
-
-For each clue: extract the exact clue text. If you can see filled letters in the grid, include them in "pattern" using dots for unknowns. Leave pattern as empty string if no letters visible.`}
+          {type:'text',text:`This is a crossword puzzle image. Extract all visible clues.\n\nReturn ONLY this JSON, no other text:\n{\n  "across": [\n    {"num":"1","text":"Clue text here","pattern":""},\n    {"num":"5","text":"Another clue","pattern":""}\n  ],\n  "down": [\n    {"num":"2","text":"Clue text here","pattern":""},\n    {"num":"3","text":"Another clue","pattern":""}\n  ]\n}\n\nFor each clue: extract the exact clue text. If you can see filled letters in the grid, include them in "pattern" using dots for unknowns. Leave pattern as empty string if no letters visible.`}
         ]}]
       })
     });
 
     const data=await response.json();
     const text=data.content?.find(b=>b.type==='text')?.text||'';
-    let parsed;
-try{
-  parsed=JSON.parse(text.replace(/```json|```/g,'').trim());
-}catch(jsonErr){
-  // AI returned non-JSON — extract answer from raw text
-  const answerMatch=text.match(/\b([A-Z]{3,25})\b/);
-  const answer=answerMatch?answerMatch[1]:'';
-  sr.innerHTML=answer
-    ?`<div class="sr-clue">"${clueText}"</div><div class="sr-answer">${answer}</div><div class="sr-explain">Answer extracted from AI response.</div>`
-    :`<span style="font-style:italic;color:var(--muted);">AI returned an unexpected response — try rephrasing the clue or adding more known letters.</span>`;
-  document.getElementById('clearBtn').classList.add('show');
-  if(activeClueData)activeClueData._answer=answer;
-  return;
-}
+    const parsed=safeParseJSON(text);
+
+    if(!parsed){
+      statusText.textContent='Could not read clues clearly — try the manual solver above.';
+      setTimeout(()=>status.classList.remove('show'),3000);
+      return;
+    }
+
     const across=parsed.across||[];
     const down=parsed.down||[];
     const total=across.length+down.length;
 
     if(total>0){
       statusText.textContent=`Found ${across.length} across and ${down.length} down clues. Click any clue when you're stuck.`;
-      setTimeout(()=>{
-        status.classList.remove('show');
-        buildClueWorkspace(across,down);
-      },1500);
+      setTimeout(()=>{status.classList.remove('show');buildClueWorkspace(across,down);},1500);
     } else {
       statusText.textContent='Could not read clues clearly — try the manual solver above.';
       setTimeout(()=>status.classList.remove('show'),3000);
