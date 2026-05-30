@@ -496,12 +496,27 @@ Extract every clue you can read. If you can see any filled letters in the grid f
         buildClueWorkspace(across,down);
       },1500);
     } else {
-      statusText.textContent='Could not read clues clearly — try the manual mode below.';
-      setTimeout(()=>status.classList.remove('show'),3000);
+      status.classList.remove('show');
+      const gentle = document.createElement('p');
+      gentle.style.cssText = 'font-size:0.82rem;font-style:italic;color:var(--muted);margin-top:0.75rem;text-align:center;';
+      gentle.textContent = 'Could not read clues clearly — try the manual solver below.';
+      const existingMsg = document.getElementById('gentleMsg');
+      if(existingMsg) existingMsg.remove();
+      gentle.id = 'gentleMsg';
+      document.getElementById('uploadZone').after(gentle);
+      setTimeout(()=>gentle.remove(), 5000);
     }
   }catch(e){
-    statusText.textContent='Could not read puzzle — please use the manual clue solver below.';
-    setTimeout(()=>status.classList.remove('show'),3000);
+    status.classList.remove('show');
+    // Show gentle message below upload zone instead of error spinner
+    const gentle = document.createElement('p');
+    gentle.style.cssText = 'font-size:0.82rem;font-style:italic;color:var(--muted);margin-top:0.75rem;text-align:center;';
+    gentle.textContent = 'Could not read puzzle automatically — please use the manual clue solver below.';
+    const existingMsg = document.getElementById('gentleMsg');
+    if(existingMsg) existingMsg.remove();
+    gentle.id = 'gentleMsg';
+    document.getElementById('uploadZone').after(gentle);
+    setTimeout(()=>gentle.remove(), 5000);
   }
 });
 
