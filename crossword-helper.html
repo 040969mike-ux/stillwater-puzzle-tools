@@ -185,7 +185,7 @@
           <div class="upload-sub">AI reads all the clues — then waits for you.<br>Work the puzzle yourself. Click a clue only when stuck.</div>
         </div>
 
-        <div class="ai-status" id="aiStatus" style="display:none;">
+        <div class="ai-status" id="aiStatus">
           <div class="ai-spinner"></div>
           <span id="aiStatusText"></span>
         </div>
@@ -446,8 +446,8 @@ document.getElementById('imageInput').addEventListener('change',async function()
   if(!file||!file.size)return; // Guard against empty/phantom file events
   const status=document.getElementById('aiStatus');
   const statusText=document.getElementById('aiStatusText');
-  status.classList.add('show');
   statusText.textContent='Reading your crossword clues — this takes about 15 seconds…';
+  status.classList.add('show');
 
   const base64=await new Promise((res,rej)=>{
     const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=rej;r.readAsDataURL(file);
