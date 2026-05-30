@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <link rel="canonical" href="https://stillwaterpuzzletools.com/crossword-helper.html" />
+  <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-XG432L1K72"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -48,6 +49,7 @@
     .card-head h2{font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:600;color:var(--cream);}
     .card-body{padding:1.25rem;}
 
+    /* UPLOAD */
     .upload-zone{border:2px dashed var(--cream-3);border-radius:var(--r);padding:1.75rem;text-align:center;cursor:pointer;transition:border-color 0.2s,background 0.2s;position:relative;}
     .upload-zone:hover,.upload-zone.drag-over{border-color:var(--gold);background:rgba(200,151,63,0.04);}
     .upload-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
@@ -64,51 +66,26 @@
     .or-divider span{font-size:0.7rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);white-space:nowrap;}
     .or-divider::before,.or-divider::after{content:'';flex:1;height:1px;background:var(--cream-3);}
 
+    /* MANUAL PATTERN */
     .manual-section{display:flex;flex-direction:column;gap:0.75rem;}
     .input-label{font-size:0.78rem;font-weight:500;color:var(--navy);display:block;margin-bottom:0.3rem;}
-
-    .clue-source-box{background:var(--cream-2);border:1.5px solid var(--cream-3);border-radius:var(--r);padding:0.65rem 0.9rem;font-size:0.82rem;min-height:2.2rem;font-style:italic;color:var(--muted);outline:none;transition:border-color 0.2s;}
-    .clue-source-box:focus{border-color:var(--gold);background:var(--white);}
-    .clue-source-box.populated{font-style:normal;color:var(--navy);border-color:var(--gold);}
-
-    .square-counter{display:none;align-items:center;gap:0.75rem;background:#fff8e8;border:1.5px solid var(--gold);border-radius:var(--r);padding:0.65rem 1rem;margin-top:0.5rem;}
-    .square-counter.show{display:flex;}
-    .square-counter-label{font-size:0.78rem;font-weight:600;color:var(--navy);flex:1;line-height:1.4;}
-    .square-counter-label span{display:block;font-size:0.7rem;font-weight:400;color:var(--muted);margin-top:0.15rem;}
-    .spinner-row{display:flex;align-items:center;gap:0;border:1.5px solid var(--gold);border-radius:var(--r);overflow:hidden;flex-shrink:0;}
-    .spinner-btn{background:var(--navy);color:var(--gold-2);border:none;width:2.2rem;height:2.2rem;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.15s;flex-shrink:0;}
-    .spinner-btn:hover{background:var(--slate);}
-    .spinner-val{font-family:'DM Mono',monospace;font-size:1rem;font-weight:600;color:var(--navy);background:var(--white);width:2.5rem;height:2.2rem;display:flex;align-items:center;justify-content:center;border-left:1px solid var(--cream-3);border-right:1px solid var(--cream-3);}
-    .spinner-apply{font-size:0.72rem;font-weight:600;background:var(--gold);color:var(--navy);border:none;border-radius:var(--r);padding:0.4rem 0.75rem;cursor:pointer;white-space:nowrap;transition:opacity 0.15s;margin-left:0.5rem;}
-    .spinner-apply:hover{opacity:0.85;}
-
     .pattern-row{display:flex;gap:0.5rem;}
-    .pattern-input{flex:1;font-family:'DM Mono',monospace;font-size:1.1rem;letter-spacing:0.18em;padding:0.6rem 0.85rem;border:1.5px solid var(--cream-3);border-radius:var(--r);background:var(--cream);color:var(--navy);text-transform:uppercase;outline:none;transition:border-color 0.2s,box-shadow 0.2s;}
+    .pattern-input{flex:1;font-family:'DM Mono',monospace;font-size:1.1rem;letter-spacing:0.18em;padding:0.6rem 0.85rem;border:1.5px solid var(--cream-3);border-radius:var(--r);background:var(--cream);color:var(--navy);text-transform:uppercase;outline:none;transition:border-color 0.2s;}
     .pattern-input:focus{border-color:var(--gold);background:var(--white);}
-    .pattern-input.pulse{border-color:var(--gold);box-shadow:0 0 0 3px rgba(200,151,63,0.25);animation:pulse-border 1.5s ease-in-out 3;}
-    @keyframes pulse-border{0%,100%{box-shadow:0 0 0 3px rgba(200,151,63,0.25);}50%{box-shadow:0 0 0 6px rgba(200,151,63,0.1);}}
     .pattern-input::placeholder{text-transform:none;letter-spacing:0;font-style:italic;color:#bbb;font-size:0.88rem;}
+    .clue-input{width:100%;font-family:'DM Sans',sans-serif;font-size:0.88rem;padding:0.6rem 0.85rem;border:1.5px solid var(--cream-3);border-radius:var(--r);background:var(--cream);color:var(--navy);outline:none;transition:border-color 0.2s;}
+    .clue-input:focus{border-color:var(--gold);background:var(--white);}
+    .clue-input::placeholder{font-style:italic;color:#bbb;}
 
-    .pattern-tip{font-size:0.75rem;color:var(--muted);margin-top:0.3rem;line-height:1.5;display:none;}
-    .pattern-tip.show{display:block;}
-    .pattern-tip strong{color:var(--navy);}
-
+    .btn-row{display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:0.5rem;}
     .btn{font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:500;border:none;border-radius:var(--r);padding:0.55rem 1.1rem;cursor:pointer;transition:opacity 0.15s,transform 0.12s;}
-    .btn:hover:not(:disabled){opacity:0.88;transform:translateY(-1px);}
-    .btn:disabled{opacity:0.4;cursor:not-allowed;transform:none;}
+    .btn:hover{opacity:0.88;transform:translateY(-1px);}
     .btn-primary{background:var(--navy);color:var(--gold-2);}
+    .btn-gold{background:var(--gold);color:var(--navy);}
     .btn-ghost{background:none;border:1.5px solid var(--cream-3);color:var(--muted);font-size:0.78rem;}
-    .btn-ghost:hover:not(:disabled){border-color:var(--slate-2);color:var(--navy);}
-    .btn-clear{background:none;border:1.5px solid var(--cream-3);color:var(--muted);font-size:0.75rem;display:none;margin-top:0.5rem;}
-    .btn-clear.show{display:inline-block;}
+    .btn-ghost:hover{border-color:var(--slate-2);color:var(--navy);}
 
-    .tip-box{display:none;background:#fff8e8;border:1.5px solid var(--gold);border-radius:var(--r);padding:0.85rem 1rem;margin-top:0.75rem;}
-    .tip-box.show{display:block;}
-    .tip-box-head{font-size:0.78rem;font-weight:600;color:var(--navy);margin-bottom:0.4rem;display:flex;align-items:center;gap:0.4rem;}
-    .tip-box ul{list-style:none;display:flex;flex-direction:column;gap:0.3rem;padding-left:0;}
-    .tip-box ul li{font-size:0.78rem;color:var(--text);line-height:1.5;padding-left:1.1rem;position:relative;}
-    .tip-box ul li::before{content:'→';position:absolute;left:0;color:var(--gold);font-size:0.7rem;}
-
+    /* SINGLE RESULT */
     .single-result{display:none;background:var(--cream);border:1.5px solid var(--cream-3);border-radius:var(--r);padding:1rem;margin-top:1rem;}
     .single-result.show{display:block;}
     .sr-answer{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:700;color:var(--hit);letter-spacing:0.12em;margin-bottom:0.3rem;}
@@ -117,6 +94,7 @@
 
     .divider{height:1px;background:var(--cream-3);margin:1.25rem 0;}
 
+    /* CLUE LIST WORKSPACE */
     .workspace{display:none;}
     .workspace.show{display:block;}
     .workspace-label{font-size:0.68rem;font-weight:500;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);margin-bottom:0.75rem;}
@@ -137,6 +115,7 @@
     .clue-item.active .clue-text{color:var(--cream);}
     .clue-item.solved .clue-answer{font-family:'DM Mono',monospace;font-size:0.75rem;color:var(--hit);font-weight:500;display:block;margin-top:0.15rem;}
 
+    /* CLUE RESULT PANEL */
     .clue-result{display:none;background:var(--cream);border:1.5px solid var(--gold);border-radius:var(--r);padding:1rem 1.25rem;margin-bottom:1rem;}
     .clue-result.show{display:block;animation:fadeIn 0.2s ease;}
     @keyframes fadeIn{from{opacity:0;transform:translateY(-4px);}to{opacity:1;transform:translateY(0);}}
@@ -146,6 +125,7 @@
     .cr-solving{font-style:italic;color:var(--muted);font-size:0.82rem;}
     .cr-actions{display:flex;gap:0.5rem;margin-top:0.75rem;}
 
+    /* SIDEBAR */
     .sidebar{display:flex;flex-direction:column;gap:1.25rem;}
     .side-card{background:var(--white);border-radius:10px;box-shadow:var(--shadow);overflow:hidden;}
     .side-head{background:var(--navy);padding:0.6rem 1rem;}
@@ -188,7 +168,7 @@
 
 <div class="hero">
   <h1>Crossword <span>Helper</span></h1>
-  <p>Upload a photo of your crossword — work it yourself, and click any clue <em>only when you're stuck</em>. The clue fills in automatically. Count the squares, set the number, hit Solve It.</p>
+  <p>Upload a photo of your crossword — work it yourself, and click any clue <em>only when you're stuck</em>. AI solves that one clue only, with an explanation. Nothing else is touched until you ask.</p>
 </div>
 
 <div class="page">
@@ -197,6 +177,7 @@
       <div class="card-head"><h2>✦ &nbsp;Your Crossword Puzzle</h2></div>
       <div class="card-body">
 
+        <!-- UPLOAD -->
         <div class="upload-zone" id="uploadZone">
           <input type="file" id="imageInput" accept="image/*" capture="environment" />
           <div class="upload-icon">📷</div>
@@ -209,57 +190,33 @@
           <span id="aiStatusText">Reading your crossword clues — this takes about 15 seconds…</span>
         </div>
 
+        <!-- OR: MANUAL SINGLE CLUE -->
         <div class="or-divider"><span>or solve one clue manually</span></div>
 
         <div class="manual-section">
           <div>
-            <label class="input-label">Clue — click a clue from the list below, or type one here</label>
-            <div id="clueSourceBox" class="clue-source-box" contenteditable="true">Click a clue from the list below, or type your clue here…</div>
-          </div>
-
-          <div class="square-counter" id="squareCounter">
-            <div class="square-counter-label">
-              How many squares does this word fill?
-              <span>Count the empty boxes for this answer in your grid, then tap + or − to match.</span>
-            </div>
-            <div class="spinner-row">
-              <button class="spinner-btn" id="spinnerMinus">−</button>
-              <div class="spinner-val" id="spinnerVal">0</div>
-              <button class="spinner-btn" id="spinnerPlus">+</button>
-            </div>
-            <button class="spinner-apply" id="spinnerApply">Set Pattern →</button>
-          </div>
-
-          <div>
-            <label class="input-label" for="patternInput">Pattern — replace dots with any letters you already know</label>
+            <label class="input-label" for="patternInput">Pattern (use dots for unknown letters)</label>
             <div class="pattern-row">
-              <input id="patternInput" class="pattern-input" type="text" placeholder="Tap + / − above to set squares, then fill in known letters" maxlength="25" autocomplete="off" spellcheck="false" />
-              <button class="btn btn-primary" id="solveOneBtn" disabled>Solve It</button>
-            </div>
-            <div class="pattern-tip show" id="patternTip">
-              Replace any dot with a letter you already know. Example: 3rd letter is R → <strong>..R........</strong>
+              <input id="patternInput" class="pattern-input" type="text" placeholder="e.g. P..ZLE" maxlength="25" autocomplete="off" spellcheck="false" />
+              <button class="btn btn-primary" id="solveOneBtn">Solve It</button>
             </div>
           </div>
-
-          <button class="btn btn-clear" id="clearBtn">✕ Clear &amp; Next Clue</button>
+          <div>
+            <label class="input-label" for="clueInput">The clue (optional but helps accuracy)</label>
+            <input id="clueInput" class="clue-input" type="text" placeholder="e.g. A game that tests ingenuity (6)" />
+          </div>
         </div>
 
-        <div class="tip-box" id="tipBox">
-          <div class="tip-box-head">💡 Need a better answer? Try this:</div>
-          <ul>
-            <li>Solve a crossing word first to get at least one letter, then replace that dot with the letter you found</li>
-            <li>Example: you solved a cross and know the 3rd letter is R → change <strong>........</strong> to <strong>..R.....</strong></li>
-            <li>The more letters you fill in, the more accurate the answer</li>
-            <li>Make sure the clue text is filled in above — it helps narrow down the answer significantly</li>
-          </ul>
-        </div>
-
+        <!-- SINGLE CLUE RESULT -->
         <div class="single-result" id="singleResult"></div>
 
         <div class="divider"></div>
 
+        <!-- CLUE LIST WORKSPACE — shown after photo upload -->
         <div class="workspace" id="workspace">
           <div class="workspace-label">Your Clues — click one only when you're stuck</div>
+
+          <!-- Active clue result -->
           <div class="clue-result" id="clueResult">
             <div class="cr-label">Answer</div>
             <div class="cr-answer" id="crAnswer"></div>
@@ -269,6 +226,7 @@
               <button class="btn btn-ghost" id="dismissBtn" style="font-size:0.72rem;">Dismiss</button>
             </div>
           </div>
+
           <div class="clue-columns">
             <div>
               <div class="clue-col-head">Across</div>
@@ -290,15 +248,12 @@
       <div class="side-head"><h3>How it works</h3></div>
       <div class="side-body">
         <ol class="how-list">
-          <li>Upload a photo — AI reads all clues</li>
-          <li>Work the puzzle yourself first</li>
-          <li>Stuck? Click the clue in the list below</li>
-          <li>Count the squares for that word in your grid</li>
-          <li>Tap + or − to set the square count</li>
-          <li>Hit "Set Pattern" — dots fill in automatically</li>
-          <li>Replace dots with any letters you already know</li>
-          <li>Hit Solve It — AI solves only that clue</li>
-          <li>Mark solved, hit Clear &amp; Next, keep going</li>
+          <li>Upload a photo of your crossword puzzle page</li>
+          <li>AI reads all across and down clues</li>
+          <li>Work the puzzle yourself — nothing is solved yet</li>
+          <li>Stuck on a clue? Click it in the list</li>
+          <li>AI solves ONLY that clue + explains why</li>
+          <li>Mark it solved, then keep working the rest yourself</li>
         </ol>
       </div>
     </div>
@@ -339,10 +294,17 @@
 // ── STATE ──────────────────────────────────────────────────────────
 let activeClueItem=null;
 let activeClueData=null;
-let currentClueText='';
-let squareCount=0;
 
-// ── HELPERS ────────────────────────────────────────────────────────
+// Reset file input on load to prevent browser from restoring previous state
+window.addEventListener('load', () => {
+  const input = document.getElementById('imageInput');
+  if (input) input.value = '';
+});
+
+// ── PATTERN MATCH (for manual single-clue mode) ────────────────────
+const WORDS=("ab ado age ago aid aim air ale all aloe also alto amid and ant any ape arc are ark arm art ash ask ate back bade bail bait bake bald bale ball balm band bane bang bank bare bark barn bash bask bass bath bead beam bean bear beat beer beet bell bend best bile bill bind bird bite blow blue blur boat body bold bolt bond bone book bore born bowl bred brew brow bull bump burn bush cage cake calm came cane cape card care cart case cash cast cave cent chap chat chip clan clap clay clip club clue coal coat coil cola cold colt comb come cone cord core cork corn cost coup cove crab crew crop crow cube curb cure curl cute dale damp dare dark dart dash daze deal dear debt deck deer deft deli dent desk dial dice dill dime dine dire disk dock dome done dove down drab drag dram drip drop drum dual duke dull dune dusk dust each earl ease east easy edge else emit envy epic even ever evil exam face fact fade fail fair fake fall fame fare farm fast fate fawn fear feat feed feel feet fell felt fend fern fest feud file fill film find fine fire firm fish fist five flag flap flat flea fled flew flip flow foam fold fond ford fore fork form fort foul fowl fray free frog fuel full fume fund fuse fuzz gale gall game gape gate gave gaze gear gent germ gill girl glad glee glob glum glut gnaw gold golf gone gout grab gram gray grew grid grim grin gulf gull gust hack hail hale half hall halt hang hank hard hare hark harm harp hash haul haze head heal heap hear heat heel held helm help hemp herb herd hero hide high hike hill hint hive hoax hock hole home hone hood hook horn hose hour hull hump hung hunt hurl inch iris iron isle itch jade jail jest keen kelp kept kind king kite knew knit knob knot lace lack laid lame lamp lane lard lark lash laud lave lawn lead leaf leak lean leap lend lens lest levy lilt lime limp line lion list live load loam lobe lock loft lone loon lord lore lose loss loud lout lure lurk lust mace made mail main male mall malt mane mark mare mast mate maze meal mean meat meld melt memo mend mere mesh mild mill mime mint mire mist moat mole molt moon moot mope more moss most moth move much mule murk musk myth nave near neat nest next node none noon norm nose note null once open oval oven pace pack pact paid pall palm pant pare park part past pave peak peal peat peel peer pelt pest pick pier pile pill pine pink pint pipe plod plot plow plug plum plus poem pole poll pond pore port pose post pour prey prod prop puck puff pump pyre race rack raft rage raid rail rain rake ramp rang rank rant rare rash rate rave raze read real ream reap reel rely rent rest rice rich rick ride rift ring rink riot ripe rise risk rite road roam roar robe rock rode role roll romp roof room rope rose rout rove rude ruff rune rung runt ruse rush rust safe sage sail same sand sane sang sank sash save seal seam sear sect seed seep self sell send sent sewn shed shin ship shod shoe shop show shun silk sill sing sink sire size skid skip slam slap slat slew slim slip slop slur snag snap snub soak soar sock soil sole soot sort soul sour span spar sped spin spit spry spur stab star stay stem step stew stir stop stow stun such suit sulk surf swan swap swat swim tack tale talk tall tamp tang tank tape tare task taut teem tell tend tent term test text thin tide tilt time tire toil told toll tomb tome tong took torn tote tour town trap trek trim trip trod true tuck tuft turf twin type ugly ulna unit upon urge used vale vast vein vest vice view vile vine vise void volt vote wade waft wail wait wake wand wane warp wart wasp wave weal wean weft weld well wend wept were west wide wile will wilt wind wine wink wire wise wish wisp woke wolf womb wont wood wool work worm wove wrap wren writ yell yelp yoke zeal zest zone zoom abuse abide adage adapt adept adorn adult after again agile aglow agony agree aisle alder alert aloft alone along aloof aloud altar amend amiss ample amuse angel angry ankle annex annoy apple apply arena argue arise armor aroma arose array arrow ashen aside askew asset atlas atone attic avail avert avoid award awash awoke badly baker belle below bench birth blame bland blank blast blaze bleat bleed blend bless blind blink bliss block blood bloom blunt board bonus bound boxer brace braid brain brake brand brave brawl break breed brick bride brief brine brink brisk broth broom brood broke brook brown brush built bulge bunch cabin canny candy catch cause cedar chalk champ chant chaos chart chase cheap cheer chess chest chief chime chose chuck churn civic civil clamp clash clasp clean clear cleat cleft clerk climb cling clink cloak clock clone close cloth cloud clout coral count court cover covet crack craft cramp crane crank crash creak cream creep crest crimp croak cross crowd crown crude cruel crush crust cycle daily daisy dance dandy dealt death debut decay decry defer delay dense depot depth devil dirty dizzy dodge draft drain drape drawl dread dream dress drift drink drive drown droll drool drove dusky dwarf dwell dying early earth eight elder elect email ember emote empty endow enact enjoy epoch equip erupt essay evade evoke exact exert exile extra fable faint fairy fancy fatal feast fetch fever fiber fiend fight finch first fixed flail flair flame flank flare flash flask fleck fleet flesh fling flint flirt flock flood floor floss flour flout flown flunk flute folly force forge forgo forte found frame frank freak freed fresh friar frisk frost froze gaily gamut gauze gavel gaudy giddy girth given gland glare glass glaze gleam glean glide glint gloss glove gnarl gnome godly gorge gourd grace grade grail grain grand grasp grate great greed greet grief grill grind gripe groan groin grove growl gruff guile guise gulch gusto hasty haven hedge heist hence herby heron hoist honey honor hovel human humid ideal image imply inane incur indie inert inner inter intro irate ivory jaunt jazzy jewel jumpy kayak knack knave kneel knife knoll known kudos lance large laser latch layer leapt least leave ledge leech legal lemon level lever light lithe liver lodge lofty loose lowly lucid lumpy lunar lusty lyric magic maize major manor maple marsh match matte mauve maxim mayor medal media messy might mimic mince minor mirth moist moldy money monks month moody moose moral morph mossy motif mourn muddy mulch musty nasal nasty naval needy nerve newly nicer nifty night noble noisy north notch novel nudge nurse nymph obese occur ocean offer often onset optic orbit order organ other outer ounce outdo pansy paper party pasta pasty patch pause paved peach pearl peril perky petty phase phony pilot pinch place plaid plain plait plane plank plant plate plaza plead pleat plied plunk poach point polka poppy pound pouch power prank press prime print prior prize probe prone prong prose proud prove prowl prune psalm pudgy pulse plush quail qualm queer query quiet quill quilt quirk quota quote radar rainy rally range rapid ravel raspy raven reach realm reedy refer reign relax relay remix remit rerun reuse revel rhyme rider ridge ripen risen risky rival rocky roomy rough round route rowdy royal ruddy rugby ruler rusty sadly saint salad sandy sassy sauna savvy scale scalp scamp scant scare scarf scary scene scent scoff scold scope score scorn scout scowl scram scrap scrub seedy seize serve seven shard share sharp shawl sheen sheep sheer shelf shell shift shirk shock shoot shore short shout shred shrew shrug shuck shunt siege sieve silly since sinew skiff skimp skull slain slant slash slave sleek sleep sleet slept slick slide slime slimy slink slosh slump snare sneak sneer sniff snore snort snout snowy snuck solve sorry south space spade spank spare spark spawn speck speed spend spice spiky spill spine spire spite splat spoke spook spoon sport spout spray spree sprig spunk squat stage staid stain stair stale stalk stamp stand stare stark start stash state stave steal steam steel steep steer stern stiff still stomp stone stony stood stool store storm story stout stove straw stray strut stuck study stump stung stunk stunt style suave sugar suite sulky sunny super surge swamp sward swear sweat sweep sweet swept swift swill swoop sword syrup talon taunt tawny teach tense tepid terse testy thick thief thigh thing think thorn those three threw throe thumb thump tidal tiger tight timid tipsy title toast today token tonal topaz torch total totem tough toxic trace track trail train trait tramp trawl tread treat trend trial trick tried tripe trite troll trout trove truce truly trump trunk truss trust truth tulle tummy tuner tunic turbo twist umbra undue unify union unite unity unlit until unwed unzip usher utter vague valor value valve vapid vault vaunt verse vigor viral vivid vocal vogue voice vouch wacky waltz waste watch water weary weave weedy weigh weird wench whelp while whiff whirl whisk white whole widen widow wield windy witty woozy wormy worse worst worth wound wrath wring wrist wrong wrote yacht yearn yield young puzzle").split(' ').filter(w=>w.length>1);
+const DICT=[...new Set(WORDS)];
+
 function matchPattern(word,pattern){
   const p=pattern.toLowerCase().replace(/[^a-z.]/g,'');
   if(word.length!==p.length)return false;
@@ -350,184 +312,14 @@ function matchPattern(word,pattern){
   return true;
 }
 
-function safeParseJSON(text){
-  try{return JSON.parse(text.replace(/```json|```/g,'').trim());}
-  catch(e){return null;}
-}
-
-// ── CLUE SOURCE BOX ────────────────────────────────────────────────
-const clueBox=document.getElementById('clueSourceBox');
-const PLACEHOLDER='Click a clue from the list below, or type your clue here…';
-
-clueBox.addEventListener('focus',()=>{
-  if(clueBox.textContent===PLACEHOLDER){clueBox.textContent='';clueBox.classList.add('populated');}
-});
-clueBox.addEventListener('blur',()=>{
-  if(!clueBox.textContent.trim()){clueBox.textContent=PLACEHOLDER;clueBox.classList.remove('populated');}
-});
-clueBox.addEventListener('input',()=>{
-  currentClueText=clueBox.textContent.trim()===PLACEHOLDER?'':clueBox.textContent.trim();
-});
-
-// ── SQUARE SPINNER ─────────────────────────────────────────────────
-const spinnerVal=document.getElementById('spinnerVal');
-
-function updateSpinner(val){
-  squareCount=Math.max(1,Math.min(25,val));
-  spinnerVal.textContent=squareCount;
-}
-
-document.getElementById('spinnerMinus').addEventListener('click',()=>updateSpinner(squareCount-1));
-document.getElementById('spinnerPlus').addEventListener('click',()=>updateSpinner(squareCount+1));
-
-document.getElementById('spinnerApply').addEventListener('click',()=>{
-  if(squareCount<1)return;
-  const dots='.'.repeat(squareCount);
-  document.getElementById('patternInput').value=dots;
-  document.getElementById('patternInput').classList.add('pulse');
-  setTimeout(()=>document.getElementById('patternInput').classList.remove('pulse'),5000);
-  document.getElementById('patternInput').focus();
-  checkSolveReady();
-});
-
-// ── PATTERN INPUT ──────────────────────────────────────────────────
-const patternInput=document.getElementById('patternInput');
-patternInput.addEventListener('input',function(){
-  const p=this.selectionStart;
-  this.value=this.value.toUpperCase();
-  this.setSelectionRange(p,p);
-  checkSolveReady();
-  document.getElementById('tipBox').classList.remove('show');
-});
-
-function checkSolveReady(){
-  document.getElementById('solveOneBtn').disabled=patternInput.value.trim().length===0;
-}
-
-// ── POPULATE FROM CLUE CLICK ───────────────────────────────────────
-function populateFromClue(clue){
-  currentClueText=clue.text;
-  clueBox.textContent=clue.text;
-  clueBox.classList.add('populated');
-  patternInput.value='';
-  document.getElementById('solveOneBtn').disabled=true;
-  document.getElementById('singleResult').className='single-result';
-  document.getElementById('tipBox').classList.remove('show');
-  squareCount=0;
-  spinnerVal.textContent='0';
-  document.getElementById('squareCounter').classList.add('show');
-  document.querySelector('.manual-section').scrollIntoView({behavior:'smooth',block:'start'});
-}
-
-// ── CLEAR & NEXT ───────────────────────────────────────────────────
-document.getElementById('clearBtn').addEventListener('click',()=>{
-  clueBox.textContent=PLACEHOLDER;
-  clueBox.classList.remove('populated');
-  patternInput.value='';
-  currentClueText='';
-  squareCount=0;
-  spinnerVal.textContent='0';
-  document.getElementById('squareCounter').classList.remove('show');
-  document.getElementById('singleResult').className='single-result';
-  document.getElementById('solveOneBtn').disabled=true;
-  document.getElementById('tipBox').classList.remove('show');
-  document.getElementById('clearBtn').classList.remove('show');
-  document.getElementById('clueResult').className='clue-result';
-  if(activeClueItem)activeClueItem.classList.remove('active');
-  activeClueItem=null;
-  activeClueData=null;
-});
-
-// ── SOLVE ONE CLUE ─────────────────────────────────────────────────
-document.getElementById('solveOneBtn').addEventListener('click',async()=>{
-  const rawPattern=patternInput.value.trim();
-  const isPlaceholder=clueBox.textContent.trim()===PLACEHOLDER;
-  const clueText=isPlaceholder?'':clueBox.textContent.trim();
-  const pattern=rawPattern.replace(/[^a-zA-Z.]/g,'');
-  const letterCount=pattern.length;
-  const allDots=pattern.length>0&&[...pattern].every(c=>c==='.');
-
-  if(allDots&&!clueText){document.getElementById('tipBox').classList.add('show');return;}
-
-  const sr=document.getElementById('singleResult');
-  sr.className='single-result show';
-  sr.innerHTML='<span style="font-style:italic;color:var(--muted);">Solving…</span>';
-  document.getElementById('clearBtn').classList.add('show');
-  document.getElementById('tipBox').classList.remove('show');
-
-  const patternHint=pattern
-    ?` The answer MUST be exactly ${letterCount} letters long. Pattern: ${pattern.toUpperCase()} — dots are unknown letters, any letter shown must appear in that exact position. This is a hard constraint.`
-    :'';
-
-  if(clueText){
-    try{
-      const response=await fetch('https://joyful-cannoli-006a05.netlify.app/.netlify/functions/claude-proxy',{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({
-          model:'claude-sonnet-4-20250514',
-          max_tokens:300,
-          messages:[{role:'user',content:`You are a crossword puzzle solver. Reply with ONLY a JSON object and nothing else. No explanation outside the JSON. No markdown. Just the raw JSON.\n\nSolve this clue:${patternHint}\nClue: "${clueText}"\n\nRequired format (raw JSON only): {"answer":"WORD","explanation":"1-2 sentences"}`}]
-        })
-      });
-      const data=await response.json();
-      const text=data.content?.find(b=>b.type==='text')?.text||'';
-      const parsed=safeParseJSON(text);
-      if(!parsed){
-        const answerMatch=text.match(/\b([A-Z]{3,25})\b/);
-        const answer=answerMatch?answerMatch[1]:'';
-        sr.innerHTML=answer
-          ?`<div class="sr-clue">"${clueText}"</div><div class="sr-answer">${answer}</div><div class="sr-explain">Answer extracted from AI response.</div>`
-          :`<span style="font-style:italic;color:var(--muted);">AI returned an unexpected response — try adding more known letters.</span>`;
-        if(activeClueData)activeClueData._answer=answer;
-        return;
-      }
-      const answer=(parsed.answer||'').toUpperCase().replace(/[^A-Z]/g,'');
-      const valid=!pattern||matchPattern(answer.toLowerCase(),pattern.toLowerCase());
-      if(!valid){
-        sr.innerHTML=`<div class="sr-clue">"${clueText}"</div><div class="sr-answer">${answer}</div><div class="sr-explain">${parsed.explanation||''}</div><div style="font-size:0.75rem;color:var(--muted);margin-top:0.4rem;font-style:italic;">Note: answer may not match pattern exactly — try filling in more known letters.</div>`;
-      } else {
-        sr.innerHTML=`<div class="sr-clue">"${clueText}"</div><div class="sr-answer">${answer}</div><div class="sr-explain">${parsed.explanation||''}</div>`;
-      }
-      if(activeClueData)activeClueData._answer=answer;
-    }catch(e){
-      sr.innerHTML='<span style="font-style:italic;color:var(--muted);">Could not solve — check your pattern and try again.</span>';
-    }
-  } else {
-    try{
-      const response=await fetch('https://joyful-cannoli-006a05.netlify.app/.netlify/functions/claude-proxy',{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({
-          model:'claude-sonnet-4-20250514',
-          max_tokens:400,
-          messages:[{role:'user',content:`Give me a list of common English words that match this crossword pattern: ${pattern.toUpperCase()}\n\nRules:\n- Exactly ${letterCount} letters long\n- Dots are unknown letters\n- Any letter shown must appear in that exact position\n- Real common English words only\n\nReply ONLY in JSON: {"matches":["WORD1","WORD2","WORD3"]}`}]
-        })
-      });
-      const data=await response.json();
-      const text=data.content?.find(b=>b.type==='text')?.text||'';
-      const parsed=safeParseJSON(text);
-      const matches=parsed?(parsed.matches||[]).map(w=>w.toUpperCase()):[];
-      if(!matches.length){
-        sr.innerHTML='<span style="font-style:italic;color:var(--muted);">No matches found — try filling in a letter or two from a crossing word.</span>';
-      } else {
-        sr.innerHTML=`<div class="sr-clue">Pattern: ${pattern.toUpperCase()}</div><div style="display:flex;flex-wrap:wrap;gap:0.4rem;margin-top:0.3rem;">${matches.map(w=>`<span style="font-family:'DM Mono',monospace;font-size:0.85rem;background:var(--cream);border:1.5px solid var(--cream-3);border-radius:4px;padding:0.25rem 0.6rem;">${w}</span>`).join('')}</div>`;
-      }
-    }catch(e){
-      sr.innerHTML='<span style="font-style:italic;color:var(--muted);">Could not find matches — please try again.</span>';
-    }
-  }
-});
-
-// ── SOLVE CLUE FROM WORKSPACE ──────────────────────────────────────
+// ── SOLVE ONE CLUE VIA API ─────────────────────────────────────────
 async function solveClue(clueText,pattern,resultEl){
   resultEl.className='clue-result show';
   document.getElementById('crAnswer').textContent='';
   document.getElementById('crExplain').innerHTML='<span class="cr-solving">Thinking…</span>';
-  const letterCount=pattern?pattern.replace(/[^a-z.]/gi,'').length:0;
-  const patternHint=pattern
-    ?` The answer MUST be exactly ${letterCount} letters long. Pattern: ${pattern.toUpperCase()} — dots are unknown letters, any letter shown must appear in that exact position. This is a hard constraint.`
-    :'';
+
+  const patternHint=pattern?` The answer has ${pattern.replace(/[^a-z.]/gi,'').length} letters${pattern.includes('.')===false?' and the pattern is '+pattern.toUpperCase():', pattern: '+pattern.toUpperCase()}.`:'';
+
   try{
     const response=await fetch('https://joyful-cannoli-006a05.netlify.app/.netlify/functions/claude-proxy',{
       method:'POST',
@@ -535,27 +327,63 @@ async function solveClue(clueText,pattern,resultEl){
       body:JSON.stringify({
         model:'claude-sonnet-4-20250514',
         max_tokens:300,
-        messages:[{role:'user',content:`You are a crossword puzzle solver. Reply with ONLY a JSON object and nothing else. No explanation outside the JSON. No markdown. Just the raw JSON.\n\nSolve this clue:${patternHint}\nClue: "${clueText}"\n\nRequired format (raw JSON only): {"answer":"WORD","explanation":"1-2 sentences"}`}]
+        messages:[{role:'user',content:`Solve this crossword clue and explain briefly why.${patternHint}
+
+Clue: "${clueText}"
+
+Reply in this exact JSON format only:
+{"answer":"WORD","explanation":"Brief explanation of why this answer fits the clue in 1-2 sentences."}`}]
       })
     });
     const data=await response.json();
     const text=data.content?.find(b=>b.type==='text')?.text||'';
-    const parsed=safeParseJSON(text);
-    if(!parsed){
-      const answerMatch=text.match(/\b([A-Z]{3,25})\b/);
-      const answer=answerMatch?answerMatch[1]:'';
-      document.getElementById('crAnswer').textContent=answer||'?';
-      document.getElementById('crExplain').textContent=answer?'Answer extracted from AI response.':'Could not solve — try adding known letters.';
-      return answer;
-    }
+    const parsed=JSON.parse(text.replace(/```json|```/g,'').trim());
     document.getElementById('crAnswer').textContent=parsed.answer?.toUpperCase()||'?';
     document.getElementById('crExplain').textContent=parsed.explanation||'';
     return parsed.answer||'';
   }catch(e){
-    document.getElementById('crExplain').textContent='Could not solve this clue. Try the pattern entry above.';
+    document.getElementById('crExplain').textContent='Could not solve this clue. Try the pattern entry below.';
     return '';
   }
 }
+
+// ── MANUAL SINGLE CLUE ─────────────────────────────────────────────
+document.getElementById('solveOneBtn').addEventListener('click',async()=>{
+  const pattern=document.getElementById('patternInput').value.trim();
+  const clue=document.getElementById('clueInput').value.trim();
+  if(!pattern&&!clue){alert('Enter a pattern, a clue, or both.');return;}
+
+  const sr=document.getElementById('singleResult');
+
+  if(clue){
+    sr.className='single-result show';
+    sr.innerHTML='<span class="cr-solving">Solving clue…</span>';
+    const patternHint=pattern?` Pattern: ${pattern.toUpperCase()} (${pattern.replace(/[^a-z.]/gi,'').length} letters).`:'';
+    try{
+      const response=await fetch('https://joyful-cannoli-006a05.netlify.app/.netlify/functions/claude-proxy',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+          model:'claude-sonnet-4-20250514',
+          max_tokens:300,
+          messages:[{role:'user',content:`Solve this crossword clue.${patternHint}\nClue: "${clue}"\nReply ONLY in JSON: {"answer":"WORD","explanation":"1-2 sentence explanation."}`}]
+        })
+      });
+      const data=await response.json();
+      const text=data.content?.find(b=>b.type==='text')?.text||'';
+      const parsed=JSON.parse(text.replace(/```json|```/g,'').trim());
+      sr.innerHTML=`<div class="sr-clue">"${clue}"</div><div class="sr-answer">${(parsed.answer||'?').toUpperCase()}</div><div class="sr-explain">${parsed.explanation||''}</div>`;
+    }catch(e){
+      sr.innerHTML='<span style="font-style:italic;color:var(--muted);">Could not solve — try adding the letter pattern above.</span>';
+    }
+  } else {
+    // Pattern only — use local dictionary
+    const matches=DICT.filter(w=>matchPattern(w,pattern));
+    if(!matches.length){sr.className='single-result show';sr.innerHTML='<span style="font-style:italic;color:var(--muted);">No matches found for that pattern.</span>';return;}
+    sr.className='single-result show';
+    sr.innerHTML=`<div class="sr-clue">Pattern: ${pattern.toUpperCase()}</div><div style="display:flex;flex-wrap:wrap;gap:0.4rem;margin-top:0.3rem;">${matches.map(w=>`<span style="font-family:'DM Mono',monospace;font-size:0.85rem;background:var(--cream);border:1.5px solid var(--cream-3);border-radius:4px;padding:0.25rem 0.6rem;">${w.toUpperCase()}</span>`).join('')}</div>`;
+  }
+});
 
 // ── BUILD CLUE WORKSPACE ───────────────────────────────────────────
 function buildClueWorkspace(acrossClues,downClues){
@@ -569,12 +397,18 @@ function buildClueWorkspace(acrossClues,downClues){
     const li=document.createElement('li');
     li.className='clue-item';
     li.innerHTML=`<span class="clue-num">${clue.num}</span><span class="clue-text">${clue.text}</span>`;
-    li.addEventListener('click',()=>{
-      if(activeClueItem&&activeClueItem!==li)activeClueItem.classList.remove('active');
+    li.addEventListener('click',async()=>{
+      // Deselect previous
+      if(activeClueItem&&activeClueItem!==li){
+        activeClueItem.classList.remove('active');
+      }
       activeClueItem=li;
       li.classList.add('active');
       activeClueData=clue;
-      populateFromClue(clue);
+
+      const resultEl=document.getElementById('clueResult');
+      const answer=await solveClue(clue.text,clue.pattern||'',resultEl);
+      clue._answer=answer;
     });
     list.appendChild(li);
   }
@@ -582,12 +416,13 @@ function buildClueWorkspace(acrossClues,downClues){
   acrossClues.forEach(c=>addClueItem(c,acrossList));
   downClues.forEach(c=>addClueItem(c,downList));
   workspace.classList.add('show');
+  workspace.scrollIntoView({behavior:'smooth',block:'start'});
 }
 
-// ── MARK SOLVED / DISMISS ──────────────────────────────────────────
+// Mark solved button
 document.getElementById('markSolvedBtn').addEventListener('click',()=>{
   if(!activeClueItem)return;
-  activeClueItem.classList.add('solved');
+  activeClueItem.classList.add('solved','active');
   activeClueItem.classList.remove('active');
   const answer=activeClueData?._answer||'';
   if(answer){
@@ -607,7 +442,8 @@ document.getElementById('dismissBtn').addEventListener('click',()=>{
 
 // ── AI IMAGE EXTRACTION ────────────────────────────────────────────
 document.getElementById('imageInput').addEventListener('change',async function(){
-  const file=this.files[0];if(!file)return;
+  const file=this.files[0];
+  if(!file||!file.size)return; // Guard against empty/phantom file events
   const status=document.getElementById('aiStatus');
   const statusText=document.getElementById('aiStatusText');
   status.classList.add('show');
@@ -626,39 +462,50 @@ document.getElementById('imageInput').addEventListener('change',async function()
         max_tokens:3000,
         messages:[{role:'user',content:[
           {type:'image',source:{type:'base64',media_type:file.type||'image/jpeg',data:base64}},
-          {type:'text',text:`This is a crossword puzzle image. Extract all visible clues.\n\nReturn ONLY this JSON, no other text:\n{\n  "across": [\n    {"num":"1","text":"Clue text here","pattern":""},\n    {"num":"5","text":"Another clue","pattern":""}\n  ],\n  "down": [\n    {"num":"2","text":"Clue text here","pattern":""},\n    {"num":"3","text":"Another clue","pattern":""}\n  ]\n}\n\nFor each clue: extract the exact clue text. If you can see filled letters in the grid, include them in "pattern" using dots for unknowns. Leave pattern as empty string if no letters visible.`}
+          {type:'text',text:`This is a crossword puzzle image. Extract all visible clues.
+
+Return ONLY this JSON, no other text:
+{
+  "across": [
+    {"num":"1","text":"Clue text here","pattern":""},
+    {"num":"5","text":"Another clue","pattern":""}
+  ],
+  "down": [
+    {"num":"2","text":"Clue text here","pattern":""},
+    {"num":"3","text":"Another clue","pattern":""}
+  ]
+}
+
+Extract every clue you can read. If you can see any filled letters in the grid for a clue, include them in "pattern" using dots for unknowns (e.g. "P..ZLE"). Leave pattern empty string if no letters visible.`}
         ]}]
       })
     });
 
     const data=await response.json();
     const text=data.content?.find(b=>b.type==='text')?.text||'';
-    const parsed=safeParseJSON(text);
-
-    if(!parsed){
-      statusText.textContent='Could not read clues clearly — try the manual solver above.';
-      setTimeout(()=>status.classList.remove('show'),3000);
-      return;
-    }
+    const parsed=JSON.parse(text.replace(/```json|```/g,'').trim());
 
     const across=parsed.across||[];
     const down=parsed.down||[];
     const total=across.length+down.length;
 
     if(total>0){
-      statusText.textContent=`Found ${across.length} across and ${down.length} down clues. Click any clue when you're stuck.`;
-      setTimeout(()=>{status.classList.remove('show');buildClueWorkspace(across,down);},1500);
+      statusText.textContent=`Found ${across.length} across and ${down.length} down clues. Your puzzle is ready — work it yourself!`;
+      setTimeout(()=>{
+        status.classList.remove('show');
+        buildClueWorkspace(across,down);
+      },1500);
     } else {
-      statusText.textContent='Could not read clues clearly — try the manual solver above.';
+      statusText.textContent='Could not read clues clearly — try the manual mode below.';
       setTimeout(()=>status.classList.remove('show'),3000);
     }
   }catch(e){
-    statusText.textContent='Could not read puzzle — please use the manual clue solver above.';
+    statusText.textContent='Could not read puzzle — please use the manual clue solver below.';
     setTimeout(()=>status.classList.remove('show'),3000);
   }
 });
 
-// ── DRAG AND DROP ──────────────────────────────────────────────────
+// Drag and drop
 const zone=document.getElementById('uploadZone');
 zone.addEventListener('dragover',e=>{e.preventDefault();zone.classList.add('drag-over');});
 zone.addEventListener('dragleave',()=>zone.classList.remove('drag-over'));
@@ -669,6 +516,10 @@ zone.addEventListener('drop',e=>{
     document.getElementById('imageInput').files=e.dataTransfer.files;
     document.getElementById('imageInput').dispatchEvent(new Event('change'));
   }
+});
+
+document.getElementById('patternInput').addEventListener('input',function(){
+  const p=this.selectionStart;this.value=this.value.toUpperCase();this.setSelectionRange(p,p);
 });
 </script>
 </body>
