@@ -364,7 +364,7 @@ document.getElementById('solveOneBtn').addEventListener('click',async()=>{
         method:'POST',
         headers:{'Content-Type':'application/json'},
         body:JSON.stringify({
-          model:'claude-sonnet-4-20250514',
+          model:'claude-sonnet-4-6',
           max_tokens:300,
           messages:[{role:'user',content:`Solve this crossword clue.${patternHint}\nClue: "${clue}"\nReply ONLY in JSON: {"answer":"WORD","explanation":"1-2 sentence explanation."}`}]
         })
