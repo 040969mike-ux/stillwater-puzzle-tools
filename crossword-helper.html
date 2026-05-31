@@ -458,8 +458,7 @@ document.getElementById('imageInput').addEventListener('change',async function()
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
-        apiKey:'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',
-        model:'claude-sonnet-4-20250514',
+                model:'claude-sonnet-4-6',
         max_tokens:3000,
         messages:[{role:'user',content:[
           {type:'image',source:{type:'base64',media_type:file.type||'image/jpeg',data:base64}},
