@@ -104,7 +104,14 @@
     .promo-tag.book{background:#e8eef4;color:#2e5080;}
     .ad-placeholder{background:var(--cream-2);border:1.5px dashed var(--cream-3);border-radius:var(--r);height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.25rem;}
     .ad-placeholder span{font-size:0.68rem;font-style:italic;color:#bbb;}
-    footer{background:var(--navy);color:var(--slate-2);text-align:center;padding:1rem 1.5rem;font-size:0.72rem;font-style:italic;margin-top:auto;line-height:1.9;border-top:1px solid rgba(200,151,63,0.15);}
+    .info-box{background:rgba(200,151,63,0.08);border:1.5px solid rgba(200,151,63,0.3);border-radius:var(--r);padding:1rem 1.25rem;margin-bottom:1.25rem;}
+    .info-box-title{font-family:'Cormorant Garamond',serif;font-size:0.95rem;font-weight:600;color:var(--navy);margin-bottom:0.4rem;display:flex;align-items:center;gap:0.4rem;}
+    .info-box p{font-size:0.78rem;color:var(--muted);line-height:1.6;margin-bottom:0.35rem;}
+    .info-box p:last-child{margin-bottom:0;}
+    .info-box strong{color:var(--navy);}
+    .feedback-link{display:block;text-align:center;font-size:0.75rem;color:var(--muted);margin-top:1rem;padding-top:1rem;border-top:1px solid var(--cream-3);}
+    .feedback-link a{color:var(--gold);text-decoration:none;}
+    .feedback-link a:hover{text-decoration:underline;}
     footer a{color:var(--gold-2);text-decoration:none;}
     .footer-links{display:flex;justify-content:center;gap:1.5rem;margin-top:0.3rem;flex-wrap:wrap;}
   </style>
@@ -123,6 +130,13 @@
     <div class="tool-card">
       <div class="card-head"><h2>◈ &nbsp;What Words Are Hiding Here?</h2></div>
       <div class="card-body">
+
+        <div class="info-box">
+          <div class="info-box-title">◈ &nbsp;What Does This Tool Do?</div>
+          <p>The <strong>Hidden Word Finder</strong> is designed for <strong>jumble puzzles</strong> — those small clusters of scrambled letters (usually 6–12 letters) where you have to figure out what word or words are hiding inside them.</p>
+          <p>You give it a group of letters, and it instantly finds every real English word that can be made from those letters.</p>
+          <p><strong>Not what you're looking for?</strong> If you have a word search grid and need to find where a specific word is hidden, use the <a href="word-search-solver.html" style="color:var(--gold);">Word Search Solver</a> instead.</p>
+        </div>
 
         <div class="upload-zone" id="uploadZone">
           <input type="file" id="imageInput" accept="image/*" capture="environment" />
@@ -167,6 +181,11 @@
 
         <div class="divider"></div>
         <div id="results-area"><p class="hint-text">Upload a puzzle photo or enter your letters above and press Find Words.</p></div>
+
+        <div class="feedback-link">
+          Having trouble or have an idea to improve this tool?<br>
+          <a href="mailto:hello@stillwaterpuzzletools.com">hello@stillwaterpuzzletools.com</a>
+        </div>
       </div>
     </div>
   </main>
@@ -259,15 +278,20 @@ async function extractFromImage(file){
   const base64=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=()=>rej();r.readAsDataURL(file);});
   try{
     const response=await fetch('https://joyful-cannoli-006a05.netlify.app/.netlify/functions/claude-proxy',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
-      model:'claude-sonnet-4-20250514',max_tokens:500,
+      model:'claude-sonnet-4-6',max_tokens:500,
       messages:[{role:'user',content:[
         {type:'image',source:{type:'base64',media_type:file.type||'image/jpeg',data:base64}},
-        {type:'text',text:'This is a word jumble or letter puzzle. Extract all the scrambled/jumbled letters visible. Return ONLY a JSON object: {"letters":"ALLTHELETTERS"} — all letters combined into one string, uppercase, no spaces.'}
+        {type:'text',text:'This image contains a word jumble puzzle — a small group of scrambled letters (usually 6–12 letters) that form one or more words when unscrambled. Look for the jumbled letter cluster only — ignore any word search grids, answer lists, titles, or page numbers. Extract only the scrambled puzzle letters and return ONLY a JSON object: {"letters":"THELETTERS"} — all letters combined into one uppercase string, no spaces. If you cannot find a clear jumble puzzle in the image, return {"letters":"","error":"No jumble puzzle found"}.'}
       ]}]
     })});
     const data=await response.json();
     const text=data.content?.find(b=>b.type==='text')?.text||'';
     const parsed=JSON.parse(text.replace(/```json|```/g,'').trim());
+    if(parsed.error||!parsed.letters){
+      statusText.textContent='No jumble puzzle found in this image. Please type your letters manually.';
+      setTimeout(()=>status.classList.remove('show'),4000);
+      return null;
+    }
     statusText.textContent='Letters extracted successfully!';
     setTimeout(()=>status.classList.remove('show'),2000);
     return parsed;
