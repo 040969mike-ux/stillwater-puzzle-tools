@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="canonical" href="https://stillwaterpuzzletools.com/word-descrambler.html" />
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XG432L1K72"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag("js", new Date());
+    gtag("config", "G-XG432L1K72");
+  </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Word Descrambler — Stillwater Puzzle Tools</title>
+  <meta name="description" content="Free word descrambler with definitions. Enter scrambled letters and instantly find every valid word — with meanings. 170,000+ word dictionary. Perfect for word games and puzzles." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Serif+4:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --navy:#1b2a3f; --navy-mid:#243447; --navy-lite:#2e4260;
+      --slate:#4a6580; --slate-lite:#6b8faa;
+      --warm:#c9a96e; --warm-lite:#e2c99a;
+      --cream:#f5f0e8; --cream-mid:#ede6d6;
+      --text-main:#1b2a3f; --text-mute:#6b7f8f;
+      --white:#ffffff; --radius:6px;
+      --shadow:0 2px 16px rgba(27,42,63,0.10);
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Source Serif 4',Georgia,serif;background:var(--cream);color:var(--text-main);min-height:100vh;display:flex;flex-direction:column;}
+
+    header{background:var(--navy);padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:64px;box-shadow:0 2px 12px rgba(0,0,0,0.25);position:sticky;top:0;z-index:100;}
+    .logo{display:flex;align-items:baseline;gap:0.5rem;text-decoration:none;}
+    .logo-main{font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:700;color:var(--warm-lite);}
+    .logo-sub{font-size:0.75rem;font-weight:300;font-style:italic;color:var(--slate-lite);letter-spacing:0.06em;}
+    .nav-back{font-size:0.78rem;font-style:italic;color:var(--slate-lite);text-decoration:none;transition:color 0.15s;}
+    .nav-back:hover{color:var(--warm-lite);}
+
+    .hero{background:linear-gradient(135deg,var(--navy-mid) 0%,var(--navy-lite) 100%);padding:2.5rem 1.5rem 2rem;text-align:center;border-bottom:3px solid var(--warm);}
+    .hero h1{font-family:'Playfair Display',serif;font-size:clamp(1.6rem,4vw,2.4rem);font-weight:600;color:var(--cream);line-height:1.2;margin-bottom:0.5rem;}
+    .hero h1 span{color:var(--warm);}
+    .hero p{font-size:0.95rem;font-weight:300;font-style:italic;color:var(--slate-lite);max-width:480px;margin:0 auto;}
+
+    .page{display:grid;grid-template-columns:1fr 260px;gap:1.5rem;max-width:920px;margin:2rem auto;padding:0 1.5rem;flex:1;}
+    @media(max-width:700px){.page{grid-template-columns:1fr;}.sidebar{order:2;}}
+
+    .tool-card{background:var(--white);border-radius:10px;box-shadow:var(--shadow);overflow:hidden;}
+    .tool-card-header{background:var(--navy);padding:1rem 1.5rem;display:flex;align-items:center;gap:0.6rem;}
+    .tool-card-header .icon{font-size:1.2rem;}
+    .tool-card-header h2{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:600;color:var(--cream);}
+    .tool-body{padding:1.5rem;}
+
+    .instructions{background:var(--cream-mid);border-left:3px solid var(--warm);border-radius:0 var(--radius) var(--radius) 0;padding:0.75rem 1rem;margin-bottom:1.25rem;font-size:0.85rem;color:var(--text-mute);line-height:1.6;}
+    .instructions strong{color:var(--navy);}
+
+    .input-label{font-family:'Playfair Display',serif;font-size:0.9rem;font-weight:600;color:var(--navy);display:block;margin-bottom:0.4rem;}
+
+    .input-row{display:flex;gap:0.5rem;margin-bottom:1rem;}
+    .letters-input{flex:1;font-family:'Source Serif 4',serif;font-size:1.3rem;letter-spacing:0.2em;padding:0.65rem 1rem;border:2px solid var(--cream-mid);border-radius:var(--radius);background:var(--cream);color:var(--navy);text-transform:uppercase;transition:border-color 0.2s;outline:none;}
+    .letters-input:focus{border-color:var(--warm);background:var(--white);}
+    .letters-input::placeholder{text-transform:none;letter-spacing:0;font-style:italic;color:#aab;font-size:0.95rem;}
+
+    .btn-search{font-family:'Playfair Display',serif;font-size:0.95rem;font-weight:600;background:var(--navy);color:var(--warm-lite);border:none;border-radius:var(--radius);padding:0 1.25rem;cursor:pointer;white-space:nowrap;transition:background 0.18s,transform 0.12s;}
+    .btn-search:hover{background:var(--navy-lite);transform:translateY(-1px);}
+    .btn-search:active{transform:translateY(0);}
+    .btn-search:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
+
+    .mode-toggle{display:flex;gap:0.5rem;margin-bottom:1.25rem;background:var(--cream-mid);border-radius:var(--radius);padding:0.25rem;}
+    .mode-btn{flex:1;font-family:'Source Serif 4',serif;font-size:0.8rem;padding:0.5rem 0.5rem;border:none;background:transparent;border-radius:4px;cursor:pointer;color:var(--text-mute);transition:all 0.18s;text-align:center;}
+    .mode-btn.active{background:var(--navy);color:var(--warm-lite);font-weight:600;}
+    .mode-hint{font-size:0.75rem;font-style:italic;color:var(--text-mute);margin-bottom:1rem;padding:0.5rem 0.75rem;background:var(--cream-mid);border-radius:var(--radius);}
+
+    .filters{display:flex;flex-wrap:wrap;gap:0.75rem;margin-bottom:1.25rem;align-items:flex-end;}
+    .filter-group{display:flex;flex-direction:column;gap:0.3rem;}
+    .filter-label{font-size:0.72rem;font-weight:400;font-style:italic;color:var(--text-mute);letter-spacing:0.04em;}
+    .filter-select{font-family:'Source Serif 4',serif;font-size:0.85rem;padding:0.4rem 0.65rem;border:1.5px solid var(--cream-mid);border-radius:var(--radius);background:var(--cream);color:var(--navy);outline:none;transition:border-color 0.2s;}
+    .filter-select:focus{border-color:var(--slate-lite);}
+    .btn-clear{font-family:'Source Serif 4',serif;font-size:0.8rem;font-style:italic;color:var(--slate);background:none;border:1.5px solid var(--cream-mid);border-radius:var(--radius);padding:0.4rem 0.75rem;cursor:pointer;transition:color 0.18s,border-color 0.18s;align-self:flex-end;}
+    .btn-clear:hover{color:var(--navy);border-color:var(--slate-lite);}
+
+    .divider{height:1px;background:var(--cream-mid);margin:0.5rem 0 1.25rem;}
+
+    #results-area{min-height:80px;}
+    .hint-text{font-style:italic;color:var(--text-mute);font-size:0.88rem;padding:0.75rem 0;}
+    .results-meta{font-size:0.8rem;font-style:italic;color:var(--text-mute);margin-bottom:1rem;}
+    .results-meta strong{color:var(--navy);font-style:normal;}
+
+    .loading-state{display:flex;align-items:center;gap:0.75rem;padding:1rem 0;color:var(--slate);}
+    .spinner{width:18px;height:18px;border:2px solid var(--cream-mid);border-top-color:var(--warm);border-radius:50%;animation:spin 0.7s linear infinite;flex-shrink:0;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+
+    .word-cards{display:flex;flex-direction:column;gap:0.75rem;}
+    .word-card{background:var(--cream);border:1.5px solid var(--cream-mid);border-radius:8px;padding:0.85rem 1rem;display:flex;flex-direction:column;gap:0.3rem;animation:cardIn 0.2s ease both;transition:border-color 0.15s,box-shadow 0.15s;cursor:default;}
+    .word-card:hover{border-color:var(--slate-lite);box-shadow:0 2px 8px rgba(27,42,63,0.08);}
+    @keyframes cardIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+    .wc-top{display:flex;align-items:baseline;gap:0.75rem;}
+    .wc-word{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:700;color:var(--navy);letter-spacing:0.05em;}
+    .wc-len{font-size:0.7rem;font-style:italic;color:var(--text-mute);background:var(--cream-mid);border-radius:3px;padding:0.1rem 0.4rem;}
+    .wc-def{font-size:0.83rem;color:var(--text-mute);line-height:1.55;font-style:italic;}
+    .wc-def.loading-def{color:#bbb;}
+    .wc-def.no-def{color:#c5baa8;}
+
+    .length-section{margin-bottom:1.5rem;}
+    .length-heading{font-family:'Playfair Display',serif;font-size:0.82rem;font-weight:600;color:var(--slate);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.6rem;padding-bottom:0.35rem;border-bottom:1px solid var(--cream-mid);display:flex;justify-content:space-between;align-items:baseline;}
+    .length-heading span{font-size:0.72rem;font-style:italic;font-weight:400;letter-spacing:0;}
+
+    .no-results{font-style:italic;color:var(--text-mute);font-size:0.9rem;padding:1rem 0;}
+    .error-state{color:#c0392b;font-size:0.88rem;padding:1rem 0;font-style:italic;}
+
+    /* SIDEBAR */
+    .sidebar{display:flex;flex-direction:column;gap:1.25rem;}
+    .side-card{background:var(--white);border-radius:10px;box-shadow:var(--shadow);overflow:hidden;}
+    .side-card-header{background:var(--navy);padding:0.65rem 1rem;}
+    .side-card-header h3{font-family:'Playfair Display',serif;font-size:0.85rem;font-weight:600;color:var(--warm-lite);}
+    .side-card-body{padding:1rem;}
+
+    .how-list{list-style:none;counter-reset:steps;display:flex;flex-direction:column;gap:0.6rem;}
+    .how-list li{counter-increment:steps;display:flex;gap:0.6rem;font-size:0.8rem;color:var(--text-mute);line-height:1.5;align-items:flex-start;}
+    .how-list li::before{content:counter(steps);font-family:'Playfair Display',serif;font-size:0.75rem;font-weight:700;color:var(--white);background:var(--warm);min-width:1.25rem;height:1.25rem;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:0.1rem;}
+
+    .tools-nav{display:flex;flex-direction:column;gap:0.5rem;}
+    .tools-nav a{display:flex;align-items:center;gap:0.6rem;text-decoration:none;padding:0.6rem 0.75rem;border-radius:6px;border:1.5px solid var(--cream-mid);transition:background 0.15s,border-color 0.15s;}
+    .tools-nav a:hover{background:var(--cream);border-color:var(--slate-lite);}
+    .tools-nav a .tn-name{font-family:'Playfair Display',serif;font-size:0.85rem;font-weight:600;color:var(--navy);}
+    .tools-nav a .tn-desc{font-size:0.72rem;font-style:italic;color:var(--text-mute);}
+    .tools-nav a.active{background:var(--navy);border-color:var(--navy);}
+    .tools-nav a.active .tn-name{color:var(--warm-lite);}
+    .tools-nav a.active .tn-desc{color:var(--slate-lite);}
+
+    .promo-item{display:flex;flex-direction:column;gap:0.3rem;padding:0.65rem 0;border-bottom:1px solid var(--cream-mid);}
+    .promo-item:last-child{border-bottom:none;padding-bottom:0;}
+    .promo-item:first-child{padding-top:0;}
+    .promo-item a{font-family:'Playfair Display',serif;font-size:0.88rem;font-weight:600;color:var(--navy);text-decoration:none;line-height:1.3;transition:color 0.15s;}
+    .promo-item a:hover{color:var(--slate);}
+    .promo-item .promo-desc{font-size:0.75rem;font-style:italic;color:var(--text-mute);line-height:1.4;}
+    .promo-tag{display:inline-block;font-size:0.65rem;letter-spacing:0.06em;text-transform:uppercase;background:var(--cream-mid);color:var(--slate);border-radius:3px;padding:0.15rem 0.4rem;width:fit-content;}
+    .promo-tag.free{background:#e8f4ec;color:#3a7a50;}
+    .promo-tag.book{background:#e8eef4;color:#2e5080;}
+
+    .ad-placeholder{background:var(--cream-mid);border:1.5px dashed #c5baa8;border-radius:var(--radius);height:130px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.3rem;}
+    .ad-placeholder span{font-size:0.7rem;font-style:italic;color:#aaa;}
+
+    footer{background:var(--navy);color:var(--slate-lite);text-align:center;padding:1.25rem 1.5rem;font-size:0.75rem;font-style:italic;margin-top:auto;line-height:1.8;}
+    footer a{color:var(--warm-lite);text-decoration:none;}
+    footer a:hover{text-decoration:underline;}
+    .footer-links{display:flex;justify-content:center;gap:1.5rem;margin-top:0.4rem;flex-wrap:wrap;}
+  </style>
+</head>
+<body>
+
+<header>
+  <a class="logo" href="index.html">
+    <span class="logo-main">Stillwater</span>
+    <span class="logo-sub">puzzle tools</span>
+  </a>
+  <a class="nav-back" href="index.html">← All Tools</a>
+</header>
+
+<div class="hero">
+  <h1>Word <span>Descrambler</span></h1>
+  <p>Enter scrambled letters and find every valid word — with definitions. 170,000+ word dictionary.</p>
+</div>
+
+<div class="page">
+  <main>
+    <div class="tool-card">
+      <div class="tool-card-header">
+        <span class="icon">⟳</span>
+        <h2>Unscramble Your Letters</h2>
+      </div>
+      <div class="tool-body">
+
+        <label class="input-label" for="lettersInput">Scrambled Letters</label>
+        <div class="input-row">
+          <input id="lettersInput" class="letters-input" type="text" placeholder="e.g.  UZZLEP  or  ELWROD" maxlength="20" autocomplete="off" autocorrect="off" spellcheck="false" />
+          <button class="btn-search" id="searchBtn">Descramble</button>
+        </div>
+
+        <div class="mode-toggle" role="group" aria-label="Search mode">
+          <button class="mode-btn active" id="modeSubset" onclick="setMode('subset')">Find words WITHIN letters</button>
+          <button class="mode-btn" id="modeExact" onclick="setMode('exact')">Use ALL letters exactly</button>
+        </div>
+        <div class="mode-hint" id="modeHint">
+          Finds all valid words that can be made using any subset of your letters. Great for word games.
+        </div>
+
+        <div class="filters">
+          <div class="filter-group">
+            <span class="filter-label">Word length</span>
+            <select class="filter-select" id="lenFilter">
+              <option value="0">Any length</option>
+              <option value="2">2 letters</option>
+              <option value="3">3 letters</option>
+              <option value="4">4 letters</option>
+              <option value="5">5 letters</option>
+              <option value="6">6 letters</option>
+              <option value="7">7 letters</option>
+              <option value="8">8+ letters</option>
+            </select>
+          </div>
+          <button class="btn-clear" id="clearBtn">Clear</button>
+        </div>
+
+        <div class="divider"></div>
+        <div id="results-area">
+          <p class="hint-text">Enter your scrambled letters above and press <em>Descramble</em>.</p>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <aside class="sidebar">
+
+    <div class="side-card">
+      <div class="side-card-header"><h3>How to use</h3></div>
+      <div class="side-card-body">
+        <ol class="how-list">
+          <li>Type your scrambled letters in the box</li>
+          <li>Choose your mode: find words within letters, or use all letters exactly</li>
+          <li>Press Descramble to search 170,000+ words</li>
+          <li>Filter by length for specific puzzles</li>
+          <li>Definitions load automatically for each word</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="side-card">
+      <div class="side-card-header"><h3>All Tools</h3></div>
+      <div class="side-card-body">
+        <nav class="tools-nav">
+          <a href="crossword-helper.html">
+            <span>✦</span>
+            <span style="display:flex;flex-direction:column;gap:0.1rem;">
+              <span class="tn-name">Crossword Helper</span>
+              <span class="tn-desc">Fill in the blanks</span>
+            </span>
+          </a>
+          <a href="word-search-solver.html">
+            <span>⊞</span>
+            <span style="display:flex;flex-direction:column;gap:0.1rem;">
+              <span class="tn-name">Word Search Solver</span>
+              <span class="tn-desc">Find words in a grid</span>
+            </span>
+          </a>
+          <a href="hidden-word-finder.html">
+            <span>◈</span>
+            <span style="display:flex;flex-direction:column;gap:0.1rem;">
+              <span class="tn-name">Hidden Word Finder</span>
+              <span class="tn-desc">Words hiding in letters</span>
+            </span>
+          </a>
+          <a href="sudoku.html">
+            <span>⊛</span>
+            <span style="display:flex;flex-direction:column;gap:0.1rem;">
+              <span class="tn-name">Sudoku Tools</span>
+              <span class="tn-desc">Solve · Hint · Validate</span>
+            </span>
+          </a>
+          <a href="word-descrambler.html" class="active">
+            <span>⟳</span>
+            <span style="display:flex;flex-direction:column;gap:0.1rem;">
+              <span class="tn-name">Word Descrambler</span>
+              <span class="tn-desc">Unscramble + definitions</span>
+            </span>
+          </a>
+        </nav>
+      </div>
+    </div>
+
+    <div class="side-card">
+      <div class="side-card-header"><h3>More from Stillwater</h3></div>
+      <div class="side-card-body">
+        <div class="promo-item">
+          <span class="promo-tag free">Free</span>
+          <a href="https://gum.new/gum/cmnfp6o5h000b04juex0j1ux3" target="_blank" rel="noopener">Free 10-Page Puzzle Pack</a>
+          <span class="promo-desc">Printable puzzles — no screen needed</span>
+        </div>
+        <div class="promo-item">
+          <span class="promo-tag book">Puzzle Books</span>
+          <a href="https://www.amazon.com/stores/author/B0FFSMGDFL/allbooks" target="_blank" rel="noopener">Stillwater Puzzle Press on Amazon</a>
+          <span class="promo-desc">78+ paperback puzzle books for adults</span>
+        </div>
+        <div class="promo-item">
+          <span class="promo-tag free">Free</span>
+          <a href="https://gum.new/gum/cmn9nk0wh000204kz2mp29d3u" target="_blank" rel="noopener">Put the Phone Down</a>
+          <span class="promo-desc">A free guide to reclaiming your focus</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-card">
+      <div class="side-card-header"><h3>Advertisement</h3></div>
+      <div class="side-card-body">
+        <div class="ad-placeholder">
+          <span>Ad space</span><span>Google AdSense</span>
+        </div>
+      </div>
+    </div>
+
+  </aside>
+</div>
+
+<footer>
+  <div>Stillwater Puzzle Tools &nbsp;·&nbsp; Free puzzle helpers for offline living</div>
+  <div class="footer-links">
+    <a href="index.html">All Tools</a>
+    <a href="about.html">About</a>
+    <a href="privacy-policy.html">Privacy Policy</a>
+    <a href="terms.html">Terms of Use</a>
+    <a href="https://www.amazon.com/stores/author/B0FFSMGDFL/allbooks" target="_blank" rel="noopener">Amazon Books</a>
+    <a href="https://stillwaterfocustools.gumroad.com" target="_blank" rel="noopener">Gumroad Shop</a>
+  </div>
+  <div style="margin-top:0.5rem;color:#4a6580;">© 2026 Stillwater Publishing. No wifi required.</div>
+</footer>
+
+<script>
+  const PROXY = 'https://joyful-cannoli-006a05.netlify.app/.netlify/functions/descrambler';
+  let currentMode = 'subset';
+
+  // ── Mode toggle ──────────────────────────────────────────────────────────
+  function setMode(mode) {
+    currentMode = mode;
+    document.getElementById('modeSubset').classList.toggle('active', mode === 'subset');
+    document.getElementById('modeExact').classList.toggle('active', mode === 'exact');
+    document.getElementById('modeHint').textContent = mode === 'subset'
+      ? 'Finds all valid words that can be made using any subset of your letters. Great for word games.'
+      : 'Only finds words that use every single letter you entered — no more, no less.';
+  }
+
+  // ── Input: force uppercase ───────────────────────────────────────────────
+  document.getElementById('lettersInput').addEventListener('input', function() {
+    const pos = this.selectionStart;
+    this.value = this.value.toUpperCase();
+    this.setSelectionRange(pos, pos);
+  });
+
+  // ── Enter key ────────────────────────────────────────────────────────────
+  document.getElementById('lettersInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') doSearch();
+  });
+
+  // ── Clear ────────────────────────────────────────────────────────────────
+  document.getElementById('clearBtn').addEventListener('click', () => {
+    document.getElementById('lettersInput').value = '';
+    document.getElementById('lenFilter').value = '0';
+    document.getElementById('results-area').innerHTML = '<p class="hint-text">Enter your scrambled letters above and press <em>Descramble</em>.</p>';
+    document.getElementById('lettersInput').focus();
+  });
+
+  // ── Search ───────────────────────────────────────────────────────────────
+  async function doSearch() {
+    const raw = document.getElementById('lettersInput').value.trim();
+    const letters = raw.replace(/[^a-zA-Z]/g, '');
+    const lenFilter = parseInt(document.getElementById('lenFilter').value);
+    const area = document.getElementById('results-area');
+    const btn = document.getElementById('searchBtn');
+
+    if (letters.length < 2) {
+      area.innerHTML = '<p class="hint-text">Enter at least 2 letters to descramble.</p>';
+      return;
+    }
+
+    // Show loading
+    area.innerHTML = '<div class="loading-state"><div class="spinner"></div><span>Searching 170,000+ words…</span></div>';
+    btn.disabled = true;
+    btn.textContent = 'Searching…';
+
+    try {
+      const response = await fetch(PROXY, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          letters,
+          exactMatch: currentMode === 'exact',
+          lengthFilter: lenFilter === 8 ? 99 : lenFilter
+        })
+      });
+
+      if (!response.ok) throw new Error(`Server error: ${response.status}`);
+      const data = await response.json();
+      if (data.error) throw new Error(data.error);
+
+      renderResults(data.words, letters);
+    } catch (err) {
+      area.innerHTML = `<p class="error-state">Error: ${err.message}. Please try again.</p>`;
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Descramble';
+    }
+  }
+
+  document.getElementById('searchBtn').addEventListener('click', doSearch);
+
+  // ── Definitions ──────────────────────────────────────────────────────────
+  const defCache = {};
+
+  async function getDefinition(word) {
+    if (defCache[word] !== undefined) return defCache[word];
+    try {
+      const res = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word.toLowerCase()}`);
+      if (!res.ok) { defCache[word] = null; return null; }
+      const data = await res.json();
+      const def = data?.[0]?.meanings?.[0]?.definitions?.[0]?.definition || null;
+      defCache[word] = def;
+      return def;
+    } catch {
+      defCache[word] = null;
+      return null;
+    }
+  }
+
+  // ── Render results ───────────────────────────────────────────────────────
+  async function renderResults(words, letters) {
+    const area = document.getElementById('results-area');
+
+    if (!words || words.length === 0) {
+      const modeNote = currentMode === 'exact'
+        ? 'Try switching to "Find words within letters" mode for more results.'
+        : 'Try removing some letters or adjusting the length filter.';
+      area.innerHTML = `<p class="no-results">No words found for <strong>${letters.toUpperCase()}</strong>. ${modeNote}</p>`;
+      return;
+    }
+
+    area.innerHTML = `
+      <p class="results-meta"><strong>${words.length.toLocaleString()}</strong> word${words.length !== 1 ? 's' : ''} found for <strong>${letters.toUpperCase()}</strong></p>
+      <div class="word-cards" id="cards-container"></div>`;
+
+    const container = document.getElementById('cards-container');
+    const displayWords = words.slice(0, 200); // cap display at 200 for performance
+
+    if (words.length > 200) {
+      const notice = document.createElement('p');
+      notice.className = 'results-meta';
+      notice.style.marginBottom = '0.75rem';
+      notice.innerHTML = `Showing top 200 of ${words.length.toLocaleString()} words. Use the length filter to narrow results.`;
+      container.before(notice);
+    }
+
+    for (let i = 0; i < displayWords.length; i++) {
+      const w = displayWords[i];
+      const card = document.createElement('div');
+      card.className = 'word-card';
+      card.style.animationDelay = `${Math.min(i * 30, 400)}ms`;
+      card.innerHTML = `
+        <div class="wc-top">
+          <span class="wc-word">${w.toUpperCase()}</span>
+          <span class="wc-len">${w.length} letters</span>
+        </div>
+        <div class="wc-def loading-def" id="def-${i}">Looking up definition…</div>`;
+      container.appendChild(card);
+
+      // Load definitions with staggered delay to avoid rate limiting
+      setTimeout(() => {
+        getDefinition(w).then(def => {
+          const el = document.getElementById(`def-${i}`);
+          if (!el) return;
+          el.classList.remove('loading-def');
+          if (def) {
+            el.textContent = def.charAt(0).toUpperCase() + def.slice(1);
+          } else {
+            el.classList.add('no-def');
+            el.textContent = 'Definition not available';
+          }
+        });
+      }, i * 50);
+    }
+  }
+</script>
+</body>
+</html>

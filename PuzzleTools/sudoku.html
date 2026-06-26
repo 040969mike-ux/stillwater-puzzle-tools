@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="canonical" href="https://stillwaterpuzzletools.com/sudoku.html" />
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XG432L1K72"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag("js", new Date());
+    gtag("config", "G-XG432L1K72");
+  </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sudoku Solver, Hints & Validator — Stillwater Puzzle Tools</title>
+  <meta name="description" content="Free Sudoku tools: solve any puzzle instantly, get a hint for your next move, or check if your solution is correct. No signup needed." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Serif+4:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --navy:#1b2a3f; --navy-mid:#243447; --navy-lite:#2e4260;
+      --slate:#4a6580; --slate-lite:#6b8faa;
+      --warm:#c9a96e; --warm-lite:#e2c99a;
+      --cream:#f5f0e8; --cream-mid:#ede6d6;
+      --text-main:#1b2a3f; --text-mute:#6b7f8f;
+      --white:#ffffff; --radius:6px;
+      --shadow:0 2px 16px rgba(27,42,63,0.10);
+      --hit:#2e7d4f; --hit-lite:#e8f4ec;
+      --err:#c0392b; --err-lite:#fef3f3;
+      --hint:#1a5fa8; --hint-lite:#e8f0fb;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Source Serif 4',Georgia,serif;background:var(--cream);color:var(--text-main);min-height:100vh;display:flex;flex-direction:column;}
+
+    header{background:var(--navy);padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:64px;box-shadow:0 2px 12px rgba(0,0,0,0.25);position:sticky;top:0;z-index:100;}
+    .logo{display:flex;align-items:baseline;gap:0.5rem;text-decoration:none;}
+    .logo-main{font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:700;color:var(--warm-lite);}
+    .logo-sub{font-size:0.75rem;font-weight:300;font-style:italic;color:var(--slate-lite);letter-spacing:0.06em;}
+    .nav-back{font-size:0.78rem;font-style:italic;color:var(--slate-lite);text-decoration:none;transition:color 0.15s;}
+    .nav-back:hover{color:var(--warm-lite);}
+
+    .hero{background:linear-gradient(135deg,var(--navy-mid) 0%,var(--navy-lite) 100%);padding:2.5rem 1.5rem 2rem;text-align:center;border-bottom:3px solid var(--warm);}
+    .hero h1{font-family:'Playfair Display',serif;font-size:clamp(1.6rem,4vw,2.4rem);font-weight:600;color:var(--cream);line-height:1.2;margin-bottom:0.5rem;}
+    .hero h1 span{color:var(--warm);}
+    .hero p{font-size:0.95rem;font-weight:300;font-style:italic;color:var(--slate-lite);max-width:500px;margin:0 auto;}
+
+    .page{display:grid;grid-template-columns:1fr 260px;gap:1.5rem;max-width:920px;margin:2rem auto;padding:0 1.5rem;flex:1;}
+    @media(max-width:700px){.page{grid-template-columns:1fr;}.sidebar{order:2;}}
+
+    /* TABS */
+    .tab-bar{display:flex;gap:0;margin-bottom:0;border-radius:10px 10px 0 0;overflow:hidden;box-shadow:var(--shadow);}
+    .tab-btn{flex:1;font-family:'Playfair Display',serif;font-size:0.82rem;font-weight:600;padding:0.75rem 0.5rem;border:none;cursor:pointer;background:var(--navy-mid);color:var(--slate-lite);transition:background 0.18s,color 0.18s;border-right:1px solid var(--navy-lite);letter-spacing:0.02em;}
+    .tab-btn:last-child{border-right:none;}
+    .tab-btn.active{background:var(--navy);color:var(--warm-lite);}
+    .tab-btn:hover:not(.active){background:var(--navy-lite);color:var(--cream);}
+
+    .tool-card{background:var(--white);border-radius:0 0 10px 10px;box-shadow:var(--shadow);overflow:hidden;}
+    .tool-body{padding:1.5rem;}
+
+    .tab-panel{display:none;}
+    .tab-panel.active{display:block;}
+
+    .instructions{background:var(--cream-mid);border-left:3px solid var(--warm);border-radius:0 var(--radius) var(--radius) 0;padding:0.75rem 1rem;margin-bottom:1.25rem;font-size:0.85rem;color:var(--text-mute);line-height:1.6;}
+    .instructions strong{color:var(--navy);}
+
+    /* SUDOKU GRID */
+    .grid-wrap{display:flex;justify-content:center;margin-bottom:1.25rem;}
+    .sudoku-grid{display:grid;grid-template-columns:repeat(9,1fr);gap:2px;background:var(--navy);border:3px solid var(--navy);border-radius:6px;overflow:hidden;width:100%;max-width:360px;}
+
+    .sudoku-grid input{
+      width:100%;aspect-ratio:1;text-align:center;
+      font-family:'Playfair Display',serif;font-size:clamp(0.85rem,2.5vw,1.1rem);font-weight:600;
+      border:none;outline:none;background:var(--white);color:var(--navy);
+      caret-color:var(--warm);transition:background 0.15s,color 0.15s;
+      -moz-appearance:textfield;
+    }
+    .sudoku-grid input::-webkit-outer-spin-button,
+    .sudoku-grid input::-webkit-inner-spin-button{-webkit-appearance:none;}
+    .sudoku-grid input:focus{background:var(--cream);z-index:1;}
+    .sudoku-grid input.given{background:var(--cream-mid);color:var(--navy);font-weight:700;}
+    .sudoku-grid input.solved{background:var(--hit-lite);color:var(--hit);font-weight:700;}
+    .sudoku-grid input.hint-cell{background:var(--hint-lite);color:var(--hint);font-weight:700;animation:pulseHint 0.6s ease;}
+    .sudoku-grid input.error{background:var(--err-lite);color:var(--err);}
+    .sudoku-grid input.valid{background:var(--hit-lite);color:var(--hit);}
+
+    /* Thick box borders — right edge of cols 3,6 and bottom edge of rows 3,6 */
+    .sudoku-grid input.br{border-right:2px solid var(--navy);}
+    .sudoku-grid input.bb{border-bottom:2px solid var(--navy);}
+
+    @keyframes pulseHint{0%{transform:scale(1);}50%{transform:scale(1.15);}100%{transform:scale(1);}}
+
+    .btn-row{display:flex;flex-wrap:wrap;gap:0.6rem;margin-bottom:1rem;}
+    .btn{font-family:'Playfair Display',serif;font-size:0.88rem;font-weight:600;border:none;border-radius:var(--radius);padding:0.55rem 1.1rem;cursor:pointer;transition:opacity 0.15s,transform 0.12s;}
+    .btn:hover{opacity:0.88;transform:translateY(-1px);}
+    .btn-primary{background:var(--navy);color:var(--warm-lite);}
+    .btn-success{background:var(--hit);color:var(--white);}
+    .btn-hint{background:var(--hint);color:var(--white);}
+    .btn-ghost{background:none;border:1.5px solid var(--cream-mid);color:var(--slate);font-family:'Source Serif 4',serif;font-size:0.8rem;font-style:italic;}
+    .btn-ghost:hover{border-color:var(--slate-lite);color:var(--navy);}
+
+    .divider{height:1px;background:var(--cream-mid);margin:1rem 0;}
+
+    #result-solver,#result-hint,#result-validator{min-height:60px;margin-top:0.75rem;}
+    .result-box{border-radius:6px;padding:0.75rem 1rem;font-size:0.88rem;line-height:1.6;display:flex;align-items:flex-start;gap:0.6rem;}
+    .result-box.success{background:var(--hit-lite);border:1.5px solid var(--hit);color:var(--hit);}
+    .result-box.error{background:var(--err-lite);border:1.5px solid var(--err);color:var(--err);}
+    .result-box.info{background:var(--hint-lite);border:1.5px solid var(--hint);color:var(--hint);}
+    .result-box .rb-icon{font-size:1.1rem;flex-shrink:0;margin-top:0.1rem;}
+    .hint-text{font-style:italic;color:var(--text-mute);font-size:0.85rem;padding:0.5rem 0;}
+
+    /* SIDEBAR */
+    .sidebar{display:flex;flex-direction:column;gap:1.25rem;}
+    .side-card{background:var(--white);border-radius:10px;box-shadow:var(--shadow);overflow:hidden;}
+    .side-card-header{background:var(--navy);padding:0.65rem 1rem;}
+    .side-card-header h3{font-family:'Playfair Display',serif;font-size:0.85rem;font-weight:600;color:var(--warm-lite);}
+    .side-card-body{padding:1rem;}
+
+    .how-list{list-style:none;counter-reset:steps;display:flex;flex-direction:column;gap:0.6rem;}
+    .how-list li{counter-increment:steps;display:flex;gap:0.6rem;font-size:0.8rem;color:var(--text-mute);line-height:1.5;align-items:flex-start;}
+    .how-list li::before{content:counter(steps);font-family:'Playfair Display',serif;font-size:0.75rem;font-weight:700;color:var(--white);background:var(--warm);min-width:1.25rem;height:1.25rem;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:0.1rem;}
+
+    .tools-nav{display:flex;flex-direction:column;gap:0.5rem;}
+    .tools-nav a{display:flex;align-items:center;gap:0.6rem;text-decoration:none;padding:0.6rem 0.75rem;border-radius:6px;border:1.5px solid var(--cream-mid);transition:background 0.15s,border-color 0.15s;}
+    .tools-nav a:hover{background:var(--cream);border-color:var(--slate-lite);}
+    .tools-nav a .tn-name{font-family:'Playfair Display',serif;font-size:0.85rem;font-weight:600;color:var(--navy);}
+    .tools-nav a .tn-desc{font-size:0.72rem;font-style:italic;color:var(--text-mute);}
+    .tools-nav a.active{background:var(--navy);border-color:var(--navy);}
+    .tools-nav a.active .tn-name{color:var(--warm-lite);}
+    .tools-nav a.active .tn-desc{color:var(--slate-lite);}
+
+    .promo-item{display:flex;flex-direction:column;gap:0.3rem;padding:0.65rem 0;border-bottom:1px solid var(--cream-mid);}
+    .promo-item:last-child{border-bottom:none;padding-bottom:0;}
+    .promo-item:first-child{padding-top:0;}
+    .promo-item a{font-family:'Playfair Display',serif;font-size:0.88rem;font-weight:600;color:var(--navy);text-decoration:none;line-height:1.3;transition:color 0.15s;}
+    .promo-item a:hover{color:var(--slate);}
+    .promo-item .promo-desc{font-size:0.75rem;font-style:italic;color:var(--text-mute);line-height:1.4;}
+    .promo-tag{display:inline-block;font-size:0.65rem;letter-spacing:0.06em;text-transform:uppercase;background:var(--cream-mid);color:var(--slate);border-radius:3px;padding:0.15rem 0.4rem;width:fit-content;}
+    .promo-tag.free{background:#e8f4ec;color:#3a7a50;}
+    .promo-tag.book{background:#e8eef4;color:#2e5080;}
+
+    .ad-placeholder{background:var(--cream-mid);border:1.5px dashed #c5baa8;border-radius:var(--radius);height:130px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.3rem;}
+    .ad-placeholder span{font-size:0.7rem;font-style:italic;color:#aaa;}
+
+    footer{background:var(--navy);color:var(--slate-lite);text-align:center;padding:1.25rem 1.5rem;font-size:0.75rem;font-style:italic;margin-top:auto;line-height:1.8;}
+    footer a{color:var(--warm-lite);text-decoration:none;}
+    footer a:hover{text-decoration:underline;}
+    .footer-links{display:flex;justify-content:center;gap:1.5rem;margin-top:0.4rem;flex-wrap:wrap;}
+  </style>
+</head>
+<body>
+
+<header>
+  <a class="logo" href="index.html">
+    <span class="logo-main">Stillwater</span>
+    <span class="logo-sub">puzzle tools</span>
+  </a>
+  <a class="nav-back" href="index.html">← All Tools</a>
+</header>
+
+<div class="hero">
+  <h1>Sudoku <span>Tools</span></h1>
+  <p>Solve any puzzle, get a gentle hint, or check your work — three tools in one.</p>
+</div>
+
+<div class="page">
+  <main>
+
+    <!-- TAB BAR -->
+    <div class="tab-bar">
+      <button class="tab-btn active" data-tab="solver">⊛ &nbsp;Solver</button>
+      <button class="tab-btn" data-tab="hint">◎ &nbsp;Hint Helper</button>
+      <button class="tab-btn" data-tab="validator">✓ &nbsp;Validator</button>
+    </div>
+
+    <div class="tool-card">
+      <div class="tool-body">
+
+        <!-- ── SOLVER ── -->
+        <div class="tab-panel active" id="panel-solver">
+          <div class="instructions">
+            <strong>Enter your puzzle</strong> — type the given numbers, leave unknowns blank. Then press <em>Solve It</em>. Green cells are the solution.
+          </div>
+          <div class="grid-wrap">
+            <div class="sudoku-grid" id="grid-solver"></div>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-primary" id="btn-solve">Solve It</button>
+            <button class="btn btn-ghost" id="btn-sample-solver">Load sample</button>
+            <button class="btn btn-ghost" id="btn-clear-solver">Clear</button>
+          </div>
+          <div id="result-solver"><p class="hint-text">Enter your puzzle above and press <em>Solve It</em>.</p></div>
+        </div>
+
+        <!-- ── HINT ── -->
+        <div class="tab-panel" id="panel-hint">
+          <div class="instructions">
+            <strong>Stuck?</strong> Enter your puzzle as it stands right now, then press <em>Give Me a Hint</em>. We'll reveal just one cell to nudge you forward — not the whole solution.
+          </div>
+          <div class="grid-wrap">
+            <div class="sudoku-grid" id="grid-hint"></div>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-hint" id="btn-hint">Give Me a Hint</button>
+            <button class="btn btn-ghost" id="btn-sample-hint">Load sample</button>
+            <button class="btn btn-ghost" id="btn-clear-hint">Clear</button>
+          </div>
+          <div id="result-hint"><p class="hint-text">Enter your puzzle and press <em>Give Me a Hint</em>.</p></div>
+        </div>
+
+        <!-- ── VALIDATOR ── -->
+        <div class="tab-panel" id="panel-validator">
+          <div class="instructions">
+            <strong>Think you've got it?</strong> Enter your completed solution and press <em>Check My Solution</em>. We'll tell you if it's correct — and highlight any errors.
+          </div>
+          <div class="grid-wrap">
+            <div class="sudoku-grid" id="grid-validator"></div>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-success" id="btn-validate">Check My Solution</button>
+            <button class="btn btn-ghost" id="btn-sample-validator">Load sample</button>
+            <button class="btn btn-ghost" id="btn-clear-validator">Clear</button>
+          </div>
+          <div id="result-validator"><p class="hint-text">Enter your completed solution and press <em>Check My Solution</em>.</p></div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <aside class="sidebar">
+
+    <div class="side-card">
+      <div class="side-card-header"><h3>How each tool works</h3></div>
+      <div class="side-card-body">
+        <ol class="how-list">
+          <li><strong>Solver:</strong> Enter givens, leave blanks empty, press Solve</li>
+          <li><strong>Hint:</strong> Enter your puzzle as-is, get one cell revealed</li>
+          <li><strong>Validator:</strong> Fill all 81 cells, press Check to verify</li>
+          <li>Tab or arrow keys move between cells</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="side-card">
+      <div class="side-card-header"><h3>All Tools</h3></div>
+      <div class="side-card-body">
+        <nav class="tools-nav">
+          <a href="crossword-helper.html">
+            <span>✦</span>
+            <span style="display:flex;flex-direction:column;gap:0.1rem;">
+              <span class="tn-name">Crossword Helper</span>
+              <span class="tn-desc">Fill in the blanks</span>
+            </span>
+          </a>
+          <a href="word-search-solver.html">
+            <span>⊞</span>
+            <span style="display:flex;flex-direction:column;gap:0.1rem;">
+              <span class="tn-name">Word Search Solver</span>
+              <span class="tn-desc">Find words in a grid</span>
+            </span>
+          </a>
+          <a href="hidden-word-finder.html">
+            <span>◈</span>
+            <span style="display:flex;flex-direction:column;gap:0.1rem;">
+              <span class="tn-name">Hidden Word Finder</span>
+              <span class="tn-desc">Words hiding in letters</span>
+            </span>
+          </a>
+          <a href="sudoku.html" class="active">
+            <span>⊛</span>
+            <span style="display:flex;flex-direction:column;gap:0.1rem;">
+              <span class="tn-name">Sudoku Tools</span>
+              <span class="tn-desc">Solve · Hint · Validate</span>
+            </span>
+          </a>
+        </nav>
+      </div>
+    </div>
+
+    <div class="side-card">
+      <div class="side-card-header"><h3>More from Stillwater</h3></div>
+      <div class="side-card-body">
+        <div class="promo-item">
+          <span class="promo-tag free">Free</span>
+          <a href="https://gum.new/gum/cmnfp6o5h000b04juex0j1ux3" target="_blank" rel="noopener">Free 10-Page Puzzle Pack</a>
+          <span class="promo-desc">Printable puzzles — no screen needed</span>
+        </div>
+        <div class="promo-item">
+          <span class="promo-tag book">Puzzle Books</span>
+          <a href="https://www.amazon.com/stores/author/B0FFSMGDFL/allbooks" target="_blank" rel="noopener">Stillwater Puzzle Press on Amazon</a>
+          <span class="promo-desc">78+ paperback puzzle books for adults</span>
+        </div>
+        <div class="promo-item">
+          <span class="promo-tag free">Free</span>
+          <a href="https://gum.new/gum/cmn9nk0wh000204kz2mp29d3u" target="_blank" rel="noopener">Put the Phone Down</a>
+          <span class="promo-desc">A free guide to reclaiming your focus</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-card">
+      <div class="side-card-header"><h3>Advertisement</h3></div>
+      <div class="side-card-body">
+        <div class="ad-placeholder">
+          <span>Ad space</span><span>Google AdSense</span>
+        </div>
+      </div>
+    </div>
+
+  </aside>
+</div>
+
+<footer>
+  <div>Stillwater Puzzle Tools &nbsp;·&nbsp; Free puzzle helpers for offline living</div>
+  <div class="footer-links">
+    <a href="index.html">All Tools</a>
+    <a href="about.html">About</a>
+    <a href="privacy-policy.html">Privacy Policy</a>
+    <a href="terms.html">Terms of Use</a>
+    <a href="https://www.amazon.com/stores/author/B0FFSMGDFL/allbooks" target="_blank" rel="noopener">Amazon Books</a>
+    <a href="https://stillwaterfocustools.gumroad.com" target="_blank" rel="noopener">Gumroad Shop</a>
+  </div>
+  <div style="margin-top:0.5rem;color:#4a6580;">© 2026 Stillwater Publishing. No wifi required.</div>
+</footer>
+
+<script>
+// ── SUDOKU ENGINE ─────────────────────────────────────────────────────────
+
+function boardFromInputs(gridId) {
+  const inputs = document.querySelectorAll(`#${gridId} input`);
+  const board = [];
+  for (let r = 0; r < 9; r++) {
+    board.push([]);
+    for (let c = 0; c < 9; c++) {
+      const v = parseInt(inputs[r*9+c].value);
+      board[r].push(isNaN(v) || v < 1 || v > 9 ? 0 : v);
+    }
+  }
+  return board;
+}
+
+function isValid(board, row, col, num) {
+  for (let i = 0; i < 9; i++) {
+    if (board[row][i] === num) return false;
+    if (board[i][col] === num) return false;
+  }
+  const br = Math.floor(row/3)*3, bc = Math.floor(col/3)*3;
+  for (let r = br; r < br+3; r++)
+    for (let c = bc; c < bc+3; c++)
+      if (board[r][c] === num) return false;
+  return true;
+}
+
+function solve(board) {
+  for (let r = 0; r < 9; r++) {
+    for (let c = 0; c < 9; c++) {
+      if (board[r][c] === 0) {
+        for (let n = 1; n <= 9; n++) {
+          if (isValid(board, r, c, n)) {
+            board[r][c] = n;
+            if (solve(board)) return true;
+            board[r][c] = 0;
+          }
+        }
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
+function validateFull(board) {
+  // Returns array of [r,c] that are wrong
+  const errors = [];
+  for (let r = 0; r < 9; r++) {
+    for (let c = 0; c < 9; c++) {
+      if (board[r][c] === 0) { errors.push([r,c]); continue; }
+      const v = board[r][c];
+      board[r][c] = 0;
+      if (!isValid(board, r, c, v)) errors.push([r,c]);
+      board[r][c] = v;
+    }
+  }
+  return errors;
+}
+
+// ── SAMPLE PUZZLE ─────────────────────────────────────────────────────────
+const SAMPLE = [
+  [5,3,0, 0,7,0, 0,0,0],
+  [6,0,0, 1,9,5, 0,0,0],
+  [0,9,8, 0,0,0, 0,6,0],
+
+  [8,0,0, 0,6,0, 0,0,3],
+  [4,0,0, 8,0,3, 0,0,1],
+  [7,0,0, 0,2,0, 0,0,6],
+
+  [0,6,0, 0,0,0, 2,8,0],
+  [0,0,0, 4,1,9, 0,0,5],
+  [0,0,0, 0,8,0, 0,7,9],
+];
+
+const SAMPLE_SOLVED = [
+  [5,3,4, 6,7,8, 9,1,2],
+  [6,7,2, 1,9,5, 3,4,8],
+  [1,9,8, 3,4,2, 5,6,7],
+  [8,5,9, 7,6,1, 4,2,3],
+  [4,2,6, 8,5,3, 7,9,1],
+  [7,1,3, 9,2,4, 8,5,6],
+  [9,6,1, 5,3,7, 2,8,4],
+  [2,8,7, 4,1,9, 6,3,5],
+  [3,4,5, 2,8,6, 1,7,9],
+];
+
+// ── BUILD GRIDS ───────────────────────────────────────────────────────────
+function buildGrid(containerId) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = '';
+  for (let r = 0; r < 9; r++) {
+    for (let c = 0; c < 9; c++) {
+      const inp = document.createElement('input');
+      inp.type = 'number';
+      inp.min = 1; inp.max = 9;
+      inp.dataset.r = r;
+      inp.dataset.c = c;
+
+      // Thick border classes
+      if (c === 2 || c === 5) inp.classList.add('br');
+      if (r === 2 || r === 5) inp.classList.add('bb');
+
+      // Keyboard nav
+      inp.addEventListener('keydown', e => {
+        const inputs = [...container.querySelectorAll('input')];
+        const idx = r*9+c;
+        if (e.key==='ArrowRight') { e.preventDefault(); inputs[Math.min(idx+1,80)]?.focus(); }
+        if (e.key==='ArrowLeft')  { e.preventDefault(); inputs[Math.max(idx-1,0)]?.focus(); }
+        if (e.key==='ArrowDown')  { e.preventDefault(); inputs[Math.min(idx+9,80)]?.focus(); }
+        if (e.key==='ArrowUp')    { e.preventDefault(); inputs[Math.max(idx-9,0)]?.focus(); }
+        if (e.key==='Backspace' && !inp.value) { e.preventDefault(); inputs[Math.max(idx-1,0)]?.focus(); }
+      });
+
+      inp.addEventListener('input', () => {
+        // Strip non 1-9
+        const raw = inp.value.replace(/[^1-9]/g,'');
+        inp.value = raw ? raw[raw.length-1] : '';
+        inp.classList.remove('solved','hint-cell','error','valid');
+      });
+
+      container.appendChild(inp);
+    }
+  }
+}
+
+function loadBoard(gridId, board, givenClass) {
+  const inputs = document.querySelectorAll(`#${gridId} input`);
+  inputs.forEach((inp, i) => {
+    const r = Math.floor(i/9), c = i%9;
+    inp.value = board[r][c] || '';
+    inp.classList.remove('given','solved','hint-cell','error','valid');
+    if (board[r][c] && givenClass) inp.classList.add(givenClass);
+  });
+}
+
+function clearGrid(gridId, resultId, hintMsg) {
+  const inputs = document.querySelectorAll(`#${gridId} input`);
+  inputs.forEach(inp => {
+    inp.value = '';
+    inp.classList.remove('given','solved','hint-cell','error','valid');
+    inp.disabled = false;
+  });
+  document.getElementById(resultId).innerHTML = `<p class="hint-text">${hintMsg}</p>`;
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+['grid-solver','grid-hint','grid-validator'].forEach(buildGrid);
+
+// ── TABS ──────────────────────────────────────────────────────────────────
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(`panel-${btn.dataset.tab}`).classList.add('active');
+  });
+});
+
+// ── SOLVER ────────────────────────────────────────────────────────────────
+document.getElementById('btn-solve').addEventListener('click', () => {
+  const board = boardFromInputs('grid-solver');
+  const given = board.map(r=>[...r]);
+  const result = document.getElementById('result-solver');
+
+  const inputs = document.querySelectorAll('#grid-solver input');
+  inputs.forEach((inp,i) => {
+    const r=Math.floor(i/9),c=i%9;
+    inp.classList.remove('given','solved');
+    if (given[r][c]) inp.classList.add('given');
+  });
+
+  if (solve(board)) {
+    inputs.forEach((inp,i) => {
+      const r=Math.floor(i/9),c=i%9;
+      inp.value = board[r][c];
+      if (!given[r][c]) inp.classList.add('solved');
+    });
+    result.innerHTML = `<div class="result-box success"><span class="rb-icon">✓</span><span>Puzzle solved! <strong>Green cells</strong> show the solution values.</span></div>`;
+  } else {
+    result.innerHTML = `<div class="result-box error"><span class="rb-icon">✗</span><span>This puzzle has no solution. Check for duplicate numbers in a row, column, or box.</span></div>`;
+  }
+});
+
+document.getElementById('btn-sample-solver').addEventListener('click', () => {
+  loadBoard('grid-solver', SAMPLE, 'given');
+  document.getElementById('result-solver').innerHTML = `<p class="hint-text">Sample puzzle loaded. Press <em>Solve It</em> to see the solution.</p>`;
+});
+document.getElementById('btn-clear-solver').addEventListener('click', () =>
+  clearGrid('grid-solver','result-solver',"Enter your puzzle above and press <em>Solve It</em>."));
+
+// ── HINT ──────────────────────────────────────────────────────────────────
+document.getElementById('btn-hint').addEventListener('click', () => {
+  const board = boardFromInputs('grid-hint');
+  const original = board.map(r=>[...r]);
+  const result = document.getElementById('result-hint');
+
+  // Find all empty cells
+  const empties = [];
+  for (let r=0;r<9;r++) for (let c=0;c<9;c++) if (board[r][c]===0) empties.push([r,c]);
+
+  if (!empties.length) {
+    result.innerHTML = `<div class="result-box info"><span class="rb-icon">◎</span><span>No empty cells found — use the Validator tab to check your completed solution!</span></div>`;
+    return;
+  }
+
+  const solved = board.map(r=>[...r]);
+  if (!solve(solved)) {
+    result.innerHTML = `<div class="result-box error"><span class="rb-icon">✗</span><span>This puzzle has no solution. Check for duplicate numbers in rows, columns, or boxes.</span></div>`;
+    return;
+  }
+
+  // Pick first empty cell
+  const [hr, hc] = empties[0];
+  const hval = solved[hr][hc];
+
+  const inputs = document.querySelectorAll('#grid-hint input');
+  inputs.forEach((inp,i) => {
+    const r=Math.floor(i/9),c=i%9;
+    inp.classList.remove('given','hint-cell');
+    if (original[r][c]) inp.classList.add('given');
+  });
+
+  const hintInput = inputs[hr*9+hc];
+  hintInput.value = hval;
+  hintInput.classList.add('hint-cell');
+  hintInput.scrollIntoView({behavior:'smooth',block:'nearest'});
+
+  result.innerHTML = `<div class="result-box info"><span class="rb-icon">◎</span><span>Hint: Row <strong>${hr+1}</strong>, Column <strong>${hc+1}</strong> is <strong>${hval}</strong>. The blue cell shows the hint — keep going!</span></div>`;
+});
+
+document.getElementById('btn-sample-hint').addEventListener('click', () => {
+  loadBoard('grid-hint', SAMPLE, 'given');
+  document.getElementById('result-hint').innerHTML = `<p class="hint-text">Sample puzzle loaded. Press <em>Give Me a Hint</em> when you're ready.</p>`;
+});
+document.getElementById('btn-clear-hint').addEventListener('click', () =>
+  clearGrid('grid-hint','result-hint',"Enter your puzzle and press <em>Give Me a Hint</em>."));
+
+// ── VALIDATOR ─────────────────────────────────────────────────────────────
+document.getElementById('btn-validate').addEventListener('click', () => {
+  const board = boardFromInputs('grid-validator');
+  const result = document.getElementById('result-validator');
+  const inputs = document.querySelectorAll('#grid-validator input');
+
+  // Check all filled
+  const empties = [];
+  for (let r=0;r<9;r++) for (let c=0;c<9;c++) if (board[r][c]===0) empties.push([r,c]);
+
+  inputs.forEach(inp => inp.classList.remove('error','valid'));
+
+  if (empties.length) {
+    result.innerHTML = `<div class="result-box error"><span class="rb-icon">✗</span><span><strong>${empties.length}</strong> cell${empties.length!==1?'s are':' is'} still empty. Fill every cell before checking.</span></div>`;
+    return;
+  }
+
+  const errors = validateFull(board);
+
+  if (!errors.length) {
+    inputs.forEach(inp => inp.classList.add('valid'));
+    result.innerHTML = `<div class="result-box success"><span class="rb-icon">✓</span><span>Perfect! Your solution is <strong>correct</strong>. Well done!</span></div>`;
+  } else {
+    errors.forEach(([r,c]) => inputs[r*9+c].classList.add('error'));
+    result.innerHTML = `<div class="result-box error"><span class="rb-icon">✗</span><span><strong>${errors.length}</strong> error${errors.length!==1?'s':''} found — red cells conflict with Sudoku rules. Check those numbers.</span></div>`;
+  }
+});
+
+document.getElementById('btn-sample-validator').addEventListener('click', () => {
+  loadBoard('grid-validator', SAMPLE_SOLVED, null);
+  document.getElementById('result-validator').innerHTML = `<p class="hint-text">Sample <em>solved</em> puzzle loaded. Press <em>Check My Solution</em> to verify.</p>`;
+});
+document.getElementById('btn-clear-validator').addEventListener('click', () =>
+  clearGrid('grid-validator','result-validator',"Enter your completed solution and press <em>Check My Solution</em>."));
+</script>
+</body>
+</html>
