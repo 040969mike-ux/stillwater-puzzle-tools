@@ -1,11 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://stillwaterpuzzletools.com/</loc><lastmod>2026-05-23</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>
-  <url><loc>https://stillwaterpuzzletools.com/crossword-helper.html</loc><lastmod>2026-05-23</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://stillwaterpuzzletools.com/word-search-solver.html</loc><lastmod>2026-05-23</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://stillwaterpuzzletools.com/hidden-word-finder.html</loc><lastmod>2026-05-23</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://stillwaterpuzzletools.com/sudoku.html</loc><lastmod>2026-05-23</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://stillwaterpuzzletools.com/word-descrambler.html</loc><lastmod>2026-05-23</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://stillwaterpuzzletools.com/about.html</loc><lastmod>2026-05-23</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://stillwaterpuzzletools.com/privacy-policy.html</loc><lastmod>2026-05-23</lastmod><changefreq>yearly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://stillwaterpuzzletools.com/</loc><lastmod>2026-06-26</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://stillwaterpuzzletools.com/crossword-helper.html</loc><lastmod>2026-06-26</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://stillwaterpuzzletools.com/word-search-solver.html</loc><lastmod>2026-06-26</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://stillwaterpuzzletools.com/hidden-word-finder.html</loc><lastmod>2026-06-26</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://stillwaterpuzzletools.com/sudoku.html</loc><lastmod>2026-06-26</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://stillwaterpuzzletools.com/word-descrambler.html</loc><lastmod>2026-06-26</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://stillwaterpuzzletools.com/blog/</loc><lastmod>2026-06-26</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://stillwaterpuzzletools.com/blog/how-to-solve-a-cryptogram.html</loc><lastmod>2026-06-26</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://stillwaterpuzzletools.com/blog/word-search-strategies.html</loc><lastmod>2026-06-26</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://stillwaterpuzzletools.com/blog/how-to-solve-sudoku.html</loc><lastmod>2026-06-26</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://stillwaterpuzzletools.com/blog/crossword-solving-tips.html</loc><lastmod>2026-06-26</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://stillwaterpuzzletools.com/blog/how-to-unscramble-words.html</loc><lastmod>2026-06-26</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://stillwaterpuzzletools.com/blog/are-puzzles-good-for-your-brain.html</loc><lastmod>2026-06-26</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://stillwaterpuzzletools.com/blog/puzzles-vs-scrolling.html</loc><lastmod>2026-06-26</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://stillwaterpuzzletools.com/blog/best-puzzles-for-seniors.html</loc><lastmod>2026-06-26</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://stillwaterpuzzletools.com/blog/puzzles-before-bed.html</loc><lastmod>2026-06-26</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://stillwaterpuzzletools.com/blog/history-of-the-crossword.html</loc><lastmod>2026-06-26</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://stillwaterpuzzletools.com/blog/history-of-sudoku.html</loc><lastmod>2026-06-26</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://stillwaterpuzzletools.com/blog/history-of-word-searches.html</loc><lastmod>2026-06-26</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://stillwaterpuzzletools.com/about.html</loc><lastmod>2026-06-26</lastmod><changefreq>yearly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://stillwaterpuzzletools.com/privacy-policy.html</loc><lastmod>2026-06-26</lastmod><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://stillwaterpuzzletools.com/terms.html</loc><lastmod>2026-06-26</lastmod><changefreq>yearly</changefreq><priority>0.3</priority></url>
 </urlset>
